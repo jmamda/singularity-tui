@@ -1,0 +1,11 @@
+name: readme-from-code
+description: Generate a grounded README using world-model surface description
+usecase: 36
+steps:
+  - do: "/world describe"
+  - do: "@plan write a README from the world-model surface; sections = Overview, Install, Quickstart, CLI, Config"
+  - do: ">2 draft Overview + Quickstart"
+  - do: ">3 draft CLI + Config from the world-model output"
+  - do: "?does the draft match the actual exported surface? flag any hallucinated commands"
+  - do: "/share README.draft-{{date}}.md"
+    target: 1

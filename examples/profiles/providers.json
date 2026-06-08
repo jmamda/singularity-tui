@@ -1,0 +1,31 @@
+{
+  "name": "providers",
+  "awareness": "roster",
+  "panes": [
+    {
+      "slot": 1,
+      "adapterId": "provider:anthropic://claude-sonnet-4-6",
+      "label": "CLAUDE",
+      "persona": "You are the architect — favor structural clarity."
+    },
+    {
+      "slot": 2,
+      "adapterId": "provider:openai://gpt-5.1",
+      "label": "GPT",
+      "persona": "You are the implementer — write code, not prose."
+    },
+    {
+      "slot": 3,
+      "adapterId": "provider:openrouter://anthropic/claude-3.5-sonnet",
+      "label": "ROUTER",
+      "persona": "You are the reviewer — flag risks first."
+    },
+    { "slot": 4, "kind": "artifact", "label": "ARTIFACTS" },
+    {
+      "slot": 5,
+      "adapterId": "provider:ollama://llama3:8b",
+      "label": "LOCAL",
+      "persona": "You are a local model — be concise."
+    }
+  ]
+}

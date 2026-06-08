@@ -1,0 +1,24 @@
+{
+  "version": "0.4.0",
+  "description": "Code-red TUI dispatcher for AI coding CLIs",
+  "homepage": "https://github.com/singularity-cli/singularity-cli",
+  "license": "MIT",
+  "depends": "nodejs",
+  "url": "https://registry.npmjs.org/singularity-cli/-/singularity-cli-0.4.0.tgz",
+  "hash": "REPLACE_WITH_TARBALL_SHA256",
+  "extract_dir": "package",
+  "bin": [
+    [
+      "dist/cli.js",
+      "singularity"
+    ],
+    [
+      "dist/cli.js",
+      "scli"
+    ]
+  ],
+  "checkver": "github",
+  "autoupdate": {
+    "url": "https://registry.npmjs.org/singularity-cli/-/singularity-cli-$version.tgz"
+  }
+}

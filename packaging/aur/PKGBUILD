@@ -1,0 +1,18 @@
+# Maintainer: singularity-cli contributors
+pkgname=singularity-cli
+pkgver=0.4.0
+pkgrel=1
+pkgdesc='Code-red TUI dispatcher for AI coding CLIs'
+arch=('any')
+url='https://github.com/singularity-cli/singularity-cli'
+license=('MIT')
+depends=('nodejs>=20')
+makedepends=('npm')
+source=("https://registry.npmjs.org/${pkgname}/-/${pkgname}-${pkgver}.tgz")
+sha256sums=('REPLACE_WITH_TARBALL_SHA256')
+
+package() {
+  npm install -g --prefix "${pkgdir}/usr" "${srcdir}/${pkgname}-${pkgver}.tgz"
+  install -Dm644 "${pkgdir}/usr/lib/node_modules/${pkgname}/LICENSE" \
+    "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}

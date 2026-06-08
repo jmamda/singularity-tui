@@ -1,0 +1,40 @@
+name: New adapter
+description: Add support for another AI CLI (Aider, Cursor, etc.)
+labels: [adapter, good-first-issue]
+body:
+  - type: input
+    id: tool
+    attributes:
+      label: Tool name
+      placeholder: e.g. aider, cursor-agent, gemini
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: CLI command
+      placeholder: e.g. "aider --message"
+    validations:
+      required: true
+  - type: input
+    id: install
+    attributes:
+      label: Install path
+      placeholder: e.g. "pip install aider-chat"
+  - type: textarea
+    id: headless
+    attributes:
+      label: Headless / non-interactive flag(s)
+      description: How do you get one-shot output without an interactive UI?
+    validations:
+      required: true
+  - type: dropdown
+    id: persona
+    attributes:
+      label: System-prompt flag
+      description: Does the CLI accept a custom system prompt (similar to claude --append-system-prompt)?
+      options:
+        - "Yes (specify flag below)"
+        - "No (will need inlinePersona: true)"
+    validations:
+      required: true

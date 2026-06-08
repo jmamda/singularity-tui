@@ -1,0 +1,10 @@
+name: pre-deploy-checklist
+description: Plan-then-execute a gated deploy with capability checks
+usecase: 12
+steps:
+  - do: "@plan deploy: produce an ordered checklist (build, test, lint, migrate, smoke, tag)"
+  - do: ">2 run build + tests; report PASS/FAIL per step"
+  - do: ">3 run lint + type-check; report PASS/FAIL"
+  - do: "?all checks green - proceed to tag and push?"
+  - do: "/share deploy-{{date}}.md"
+    target: 1

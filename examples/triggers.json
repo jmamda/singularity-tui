@@ -1,0 +1,24 @@
+[
+  {
+    "id": "explain-on-change",
+    "source": "fs:change",
+    "match": "./src",
+    "slot": 1,
+    "prompt": "Briefly: what changed in {{file}}, and is anything risky?",
+    "debounceMs": 800
+  },
+  {
+    "id": "quorum-review-on-commit",
+    "source": "git:commit",
+    "match": ".",
+    "slot": 1,
+    "prompt": "?Is the last commit ({{commit}}) safe to deploy as-is?"
+  },
+  {
+    "id": "session-recap",
+    "source": "time:interval",
+    "match": "1800",
+    "slot": 1,
+    "prompt": "Summarize the last 30 minutes of dispatched changes. Note unresolved CLARIFY: questions."
+  }
+]

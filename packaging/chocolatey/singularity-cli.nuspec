@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>singularity-cli</id>
+    <version>0.4.0</version>
+    <packageSourceUrl>https://github.com/singularity-cli/singularity-cli</packageSourceUrl>
+    <owners>singularity-cli</owners>
+    <title>Singularity CLI</title>
+    <authors>Singularity contributors</authors>
+    <projectUrl>https://github.com/singularity-cli/singularity-cli</projectUrl>
+    <licenseUrl>https://github.com/singularity-cli/singularity-cli/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/singularity-cli/singularity-cli</projectSourceUrl>
+    <docsUrl>https://github.com/singularity-cli/singularity-cli#readme</docsUrl>
+    <bugTrackerUrl>https://github.com/singularity-cli/singularity-cli/issues</bugTrackerUrl>
+    <tags>cli tui ai llm anthropic openai opencode dispatcher</tags>
+    <summary>Code-red TUI dispatcher for AI coding CLIs</summary>
+    <description>
+Singularity CLI is a terminal app that lets you race, vote, relay, and plan across multiple AI coding CLIs from a single prompt bar. A war-room, not a chat. Includes an opt-in governance layer (capability tokens, sentinel veto, dual-key handoff, shadow journal, trust decay).
+    </description>
+    <dependencies>
+      <dependency id="nodejs" version="20.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

@@ -1,0 +1,11 @@
+name: multi-platform-announcement
+description: Draft a release note once and rewrite per channel
+usecase: 31
+steps:
+  - do: "@plan draft a release note from the latest CHANGELOG entry"
+  - do: ">2 rewrite for Slack (casual, threaded, with emoji)"
+  - do: ">3 rewrite for Discord (markdown, with code fences)"
+  - do: ">4 rewrite for Telegram (short, plaintext, 1 link)"
+  - do: "?does each variant preserve the key facts? APPROVE / REVISE"
+  - do: "/share announcement-{{date}}.md"
+    target: 1

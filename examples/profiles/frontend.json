@@ -1,0 +1,25 @@
+{
+  "name": "frontend",
+  "awareness": "roster",
+  "panes": [
+    {
+      "slot": 1,
+      "adapterId": "claude",
+      "label": "CLAUDE",
+      "persona": "You are the UI architect. Lead with component boundaries and state shape. Avoid premature styling. Mark non-obvious assumptions with NOTE:."
+    },
+    {
+      "slot": 2,
+      "adapterId": "opencode",
+      "label": "OPENCODE",
+      "persona": "You are the implementer. Output code in fenced blocks with a file path comment header. One block per file. Brief prose only if asked."
+    },
+    {
+      "slot": 3,
+      "adapterId": "codex",
+      "label": "CODEX",
+      "persona": "You are the reviewer. Open with APPROVE / REQUEST_CHANGES / COMMENT on the first line. Flag accessibility, perf, and bundle-size risks first."
+    },
+    { "slot": 4, "kind": "artifact", "label": "ARTIFACTS" }
+  ]
+}

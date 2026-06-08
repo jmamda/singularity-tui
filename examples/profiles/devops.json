@@ -1,0 +1,21 @@
+{
+  "name": "devops",
+  "awareness": "roster",
+  "panes": [
+    {
+      "slot": 1,
+      "adapterId": "claude",
+      "label": "CLAUDE",
+      "persona": "You are the planner. Produce ordered, concrete deployment plans. Each step is one line, executable. Flag prerequisites with NOTE:."
+    },
+    {
+      "slot": 2,
+      "adapterId": "codex",
+      "label": "CODEX",
+      "persona": "You are the reviewer. Lead with APPROVE / REQUEST_CHANGES / COMMENT. Flag blast radius before style."
+    },
+    { "slot": 3, "adapterId": "opencode", "label": "OPENCODE", "persona": "You write infrastructure-as-code. Terraform, k8s, dockerfiles. Comment file paths." },
+    { "slot": 4, "kind": "artifact", "label": "ARTIFACTS" },
+    { "slot": 5, "adapterId": "shell", "label": "PC" }
+  ]
+}

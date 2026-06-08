@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Singularity CLI — race, vote, relay, and plan across AI coding CLIs</title>
+<meta name="description" content="A war-room, not a chat. One prompt bar dispatches across multiple AI CLIs with a tiny grammar of operators. Code-red TUI with a capability-gated governance layer.">
+<meta property="og:title" content="Singularity CLI">
+<meta property="og:description" content="Race, vote, relay, and plan across multiple AI coding CLIs from a single prompt bar.">
+<style>
+  :root { --bg:#000; --red:#ff2a2a; --green:#00ff66; --amber:#ffb000; --text:#d0d0d0; --inactive:#8a8a8a; --faint:#444; }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font: 16px/1.55 ui-monospace, "JetBrains Mono", Menlo, monospace; margin:0; }
+  main { max-width: 920px; margin: 0 auto; padding: 48px 24px; }
+  h1 { color: var(--red); font-size: 40px; margin: 0 0 16px; letter-spacing: 1px; }
+  h2 { color: var(--red); margin-top: 56px; border-bottom: 1px solid var(--faint); padding-bottom: 8px; }
+  h3 { color: var(--green); margin-top: 32px; }
+  a { color: var(--green); }
+  code { color: var(--amber); background: rgba(255,176,0,0.07); padding: 1px 6px; border-radius: 3px; }
+  pre { background: #0a0a0a; color: var(--text); padding: 16px; border-left: 3px solid var(--red); overflow-x: auto; }
+  .tag { display: inline-block; padding: 2px 8px; margin: 0 4px 4px 0; border: 1px solid var(--faint); color: var(--inactive); font-size: 12px; }
+  .pulse { color: var(--red); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th, td { border: 1px solid var(--faint); padding: 8px 12px; text-align: left; }
+  th { color: var(--red); }
+  .yes { color: var(--green); } .no { color: var(--red); }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--faint); color: var(--inactive); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1><span class="pulse">●</span> SINGULARITY CLI</h1>
+<p style="font-size: 20px; color: var(--text); margin: 0 0 8px;"><strong>A war-room, not a chat.</strong></p>
+<p style="font-size: 18px; color: var(--inactive); margin: 0 0 32px;">Race, vote, relay, and plan across multiple AI coding CLIs from a single prompt bar — with an opt-in governance layer to safely hand the machine over to agents.</p>
+
+<div>
+  <span class="tag">Node ≥ 20</span>
+  <span class="tag">MIT</span>
+  <span class="tag">macOS · Linux · WSL</span>
+  <span class="tag">80 tests passing</span>
+</div>
+
+<h2>Try it in 60 seconds</h2>
+<pre>npx singularity-cli@latest --demo   # no API keys needed
+singularity wizard                  # add your CLIs (claude, opencode, codex...)
+singularity                         # launch the room</pre>
+
+<h2>The grammar</h2>
+<p>The first character of your prompt picks the multi-agent topology:</p>
+<table>
+  <tr><th>Type</th><th>What happens</th></tr>
+  <tr><td><code>text</code></td><td>dispatch to selected target pane(s)</td></tr>
+  <tr><td><code>!text</code></td><td><strong>broadcast</strong> — race every agent in parallel; live race bars</td></tr>
+  <tr><td><code>?text</code></td><td><strong>quorum vote</strong> — YES / NO / ABSTAIN tally across panes</td></tr>
+  <tr><td><code>&gt;N text</code></td><td><strong>relay</strong> — pipe current target's last response into pane N</td></tr>
+  <tr><td><code>&gt;&gt;N text</code></td><td><strong>artifact-as-callable</strong> — dispatch the selected code block as prompt</td></tr>
+  <tr><td><code>@plan goal</code></td><td><strong>plan-execute</strong> — planner pane drafts steps; workers run them</td></tr>
+  <tr><td><code>/cmd</code></td><td>slash command (no model call)</td></tr>
+</table>
+
+<h2>Why this exists</h2>
+<p>Every AI coding CLI today picks one mental model. <strong>Chat. Or pipeline. Or swarm. Or sidebar.</strong> The mental model becomes the product.</p>
+<p>Singularity is the bet that you actually want all of them, switchable per keystroke, in the same room, with rails that keep things safe enough to leave running.</p>
+
+<h2>Governance, not theater</h2>
+<p>Singularity ships a small but real trust substrate, in dependency order:</p>
+<ul>
+  <li><strong>Capability tokens</strong> — typed, scoped, expiring grants you issue with <code>/grant 5 exec:^npm 600</code>. The shell pane starts with zero.</li>
+  <li><strong>Shadow journal</strong> — every write recorded; <code>/rollback</code> reverts the whole session.</li>
+  <li><strong>Sentinel veto</strong> — deterministic blocks on writes to <code>.env</code>, <code>.ssh/</code>, <code>/etc/</code>; demands dual-key for <code>rm -rf</code>, <code>git push --force</code>, <code>sudo</code>.</li>
+  <li><strong>Dual-key handoff</strong> — two distinct panes must independently propose the same action before it executes.</li>
+  <li><strong>Trust decay</strong> — agents earn or lose autonomy per clean exec / rollback / veto.</li>
+</ul>
+
+<h2>How it compares</h2>
+<table>
+  <tr><th>Dimension</th><th>Singularity</th><th>Claude Code</th><th>Aider</th><th>OpenCode</th></tr>
+  <tr><td>Multi-CLI orchestration in parallel</td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td></tr>
+  <tr><td>Dispatch grammar (<code>!</code> <code>?</code> <code>&gt;N</code> <code>@plan</code>)</td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td></tr>
+  <tr><td>Cross-model quorum voting</td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td></tr>
+  <tr><td>Capability tokens + sentinel + shadow journal</td><td class="yes">✓</td><td>partial</td><td>via git</td><td>3-state perms</td></tr>
+  <tr><td>Direct provider models (no CLI required)</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+  <tr><td>MCP server <em>and</em> client</td><td class="yes">✓</td><td>client only</td><td class="no">✗</td><td>client only</td></tr>
+  <tr><td>Themes</td><td class="yes">✓ (8)</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓ (10+)</td></tr>
+  <tr><td>HTTP server + embedded web UI</td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="yes">✓</td></tr>
+  <tr><td>OS event triggers (daemon)</td><td class="yes">✓</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td></tr>
+  <tr><td>Open source (MIT)</td><td class="yes">✓</td><td class="no">✗</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+</table>
+
+<h2>What you actually do with it</h2>
+<h3>1. Race implementations</h3>
+<pre>!implement fizzbuzz in python AND typescript</pre>
+<p>Three panes produce solutions in parallel. Race bars show progress. The artifact pane collects every code block as a numbered <code>#N</code>.</p>
+
+<h3>2. Vote on a decision</h3>
+<pre>?is this PR safe to merge as-is</pre>
+<p>Each pane votes YES / NO / ABSTAIN on the first line. Live tally appears as they answer. Confidence-weighted aggregation. Cheaper than human consensus.</p>
+
+<h3>3. Hand off between agents</h3>
+<pre>refactor the auth flow
+&gt;2 now write the tests for what pane 1 produced
+&gt;&gt;3 review the code in artifact #1 for security</pre>
+
+<h3>4. Plan and execute autonomously</h3>
+<pre>@plan migrate the user table to postgres 17</pre>
+<p>Planner pane drafts JSON steps; each step auto-dispatches to the right worker pane.</p>
+
+<h3>5. Run the OS as a peer</h3>
+<pre>/grant 5 exec:^npm (test|run lint) 1800
+5
+npm test</pre>
+<p>The PC pane is slot 5. Sentinel blocks dangerous patterns; <code>/rollback</code> reverts every journaled write since session start.</p>
+
+<h2>Architecture</h2>
+<p>The dispatch pipeline (the single hot path):</p>
+<pre>capability check → sentinel veto → dual-key check → shadow journal → execute → trust adjust</pre>
+<p>Every action that touches the OS goes through this. <a href="../CONTROL.md">CONTROL.md</a> for the full contract; <a href="../PATTERNS.md">PATTERNS.md</a> for the 10 design patterns; <a href="../docs/architecture.md">architecture diagram</a>.</p>
+
+<h2>Install</h2>
+<pre>npm i -g singularity-cli                                # npm
+brew install singularity-cli/tap/singularity-cli         # homebrew (planned)
+docker run -it singularity-cli                           # docker
+nix run github:singularity-cli/singularity-cli           # nix
+npx singularity-cli@latest --demo                        # zero install</pre>
+
+<h2>Open source</h2>
+<p>MIT. <a href="../CONTRIBUTING.md">Contributing</a> · <a href="../SECURITY.md">Security policy</a> · <a href="../CODE_OF_CONDUCT.md">Code of Conduct</a> · <a href="../docs/good-first-issues.md">Good first issues</a>.</p>
+
+<footer>
+  <p><strong>Not to be confused with <a href="https://sylabs.io/singularity/">Singularity</a> the HPC container runtime.</strong> Different project, different domain.</p>
+</footer>
+
+</main>
+</body>
+</html>

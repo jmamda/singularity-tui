@@ -1,0 +1,25 @@
+{
+  "name": "quorum",
+  "awareness": "roster",
+  "panes": [
+    {
+      "slot": 1,
+      "adapterId": "claude",
+      "label": "CLAUDE",
+      "persona": "You are voting in a quorum. First line MUST be YES, NO, or ABSTAIN. Then 1-3 sentences of reasoning. No hedging."
+    },
+    {
+      "slot": 2,
+      "adapterId": "opencode",
+      "label": "OPENCODE",
+      "persona": "You are voting in a quorum. First line MUST be YES, NO, or ABSTAIN. Then 1-3 sentences of reasoning. No hedging."
+    },
+    {
+      "slot": 3,
+      "adapterId": "codex",
+      "label": "CODEX",
+      "persona": "You are voting in a quorum. First line MUST be YES, NO, or ABSTAIN. Then 1-3 sentences of reasoning. No hedging."
+    },
+    { "slot": 4, "kind": "artifact", "label": "ARTIFACTS" }
+  ]
+}

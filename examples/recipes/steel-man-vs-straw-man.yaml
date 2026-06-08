@@ -1,0 +1,10 @@
+name: steel-man-vs-straw-man
+description: Force structured pro/con argumentation with a judge
+usecase: 41
+steps:
+  - do: ">2 STEEL-MAN: argue the strongest form of the proposal in {{topic}}"
+  - do: ">3 STRAW-MAN: argue the weakest form of the proposal in {{topic}}"
+  - do: "@plan judge: which steel-man points survive contact with which counter-arguments?"
+  - do: "?which side wins on the merits? APPROVE-STEEL / APPROVE-STRAW / TIE"
+  - do: "/share debate-{{date}}.md"
+    target: 1

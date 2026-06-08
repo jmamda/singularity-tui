@@ -1,0 +1,5 @@
+name: smoke-test
+description: No-op recipe for E2E smoke verification (all slash commands)
+steps:
+  - do: "/grammar"
+  - do: "/help"

@@ -1,0 +1,1 @@
+Review the diff against HEAD. Open with APPROVE / REQUEST_CHANGES / COMMENT on the first line. Then list specific issues in order of severity (security → correctness → perf → style). Cite file paths and line ranges. Skip generic praise. Mark cross-cutting risks with NOTE:.

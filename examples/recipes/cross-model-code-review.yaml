@@ -1,0 +1,9 @@
+name: cross-model-code-review
+description: Multi-model vote on whether the current PR should ship
+usecase: 1
+steps:
+  - do: "!git diff origin/main...HEAD"
+  - do: "?should we ship this PR? Reply APPROVE / REQUEST-CHANGES / COMMENT with one-line reason"
+  - do: "@plan summarize the disagreements between reviewers into a single review comment"
+  - do: "/share review-{{date}}.md"
+    target: 1

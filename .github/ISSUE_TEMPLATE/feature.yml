@@ -1,0 +1,29 @@
+name: Feature / design proposal
+description: Propose a new operator, slash command, adapter, or pattern
+labels: [enhancement]
+body:
+  - type: textarea
+    id: pitch
+    attributes:
+      label: What & why
+      description: One paragraph. What feeling/workflow does this enable?
+    validations:
+      required: true
+  - type: textarea
+    id: composes
+    attributes:
+      label: How does it compose with existing primitives?
+      description: Dispatch grammar, capability tokens, sentinel, shadow journal, trust, artifacts, notes. Pick the ones it touches and say how.
+    validations:
+      required: true
+  - type: textarea
+    id: shape
+    attributes:
+      label: Sketch
+      description: Operator syntax, slash command name, UI mockup (ASCII fine). Imagine the user typing it.
+      render: text
+  - type: textarea
+    id: scope
+    attributes:
+      label: Out of scope
+      description: What this proposal explicitly does NOT do.

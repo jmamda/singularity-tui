@@ -1,0 +1,3 @@
+Decompose the following goal into 3-6 concrete, ordered steps. Number them. Each step is one line, executable. Mark prerequisites with NOTE:. If a step depends on another, write `DEPENDS: stepN`. Output ONLY the numbered list; no preamble.
+
+Goal:
