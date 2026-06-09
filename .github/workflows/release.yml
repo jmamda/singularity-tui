@@ -4,10 +4,10 @@ on:
   push:
     branches: [main]
 
+# Least privilege: id-token (provenance) not needed while publishing is off.
 permissions:
   contents: write
   pull-requests: write
-  id-token: write
 
 jobs:
   release:
@@ -23,11 +23,15 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm run build
-      - name: Changesets — version / publish
+      # Version-PR mode only: creates/updates a "Version Packages" PR from
+      # pending changesets. npm publishing is intentionally disabled while the
+      # repo is private — `--provenance` requires a public repo, and an
+      # unscoped package cannot be published with restricted access. When the
+      # project goes public, restore:
+      #   publish: npm publish --provenance --access public
+      - name: Changesets — version PR
         uses: changesets/action@v1
         with:
-          publish: npm publish --provenance --access public
           version: npx changeset version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

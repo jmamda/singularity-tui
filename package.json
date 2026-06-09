@@ -12,11 +12,11 @@
     "wizard": "tsx src/cli.tsx wizard",
     "build": "tsc",
     "start": "node dist/cli.js",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "prettier --check \"src/**/*.{ts,tsx}\" && tsc --noEmit",
+    "lint": "prettier --check \"src/**/*.{ts,tsx}\" && npm run typecheck",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "prepublishOnly": "npm run build"
   },
@@ -41,6 +41,7 @@
     "react": "^19.2.6"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "@types/node": "^25.9.1",
     "@types/react": "^19.2.15",
     "@vitest/coverage-v8": "^4.1.8",

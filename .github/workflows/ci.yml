@@ -20,8 +20,10 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'npm'
       - run: npm ci
-      - run: npm run typecheck
-      - run: npm test
+      # lint = prettier --check + tsc --noEmit (format + types enforced in CI)
+      - run: npm run lint
+      # coverage run enforces the ratchet thresholds in vitest.config.ts
+      - run: npm run test:coverage
       - run: npm run build
 
   docker:
