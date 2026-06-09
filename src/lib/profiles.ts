@@ -2,11 +2,7 @@ import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import { PROFILES_DIR } from './paths.js';
 import type { Slot } from '../store.js';
-import {
-  PERSONA_ARCHITECT,
-  PERSONA_IMPLEMENTER,
-  PERSONA_REVIEWER,
-} from './promptEng.js';
+import { PERSONA_ARCHITECT, PERSONA_IMPLEMENTER, PERSONA_REVIEWER } from './promptEng.js';
 
 export type ProfilePaneKind = 'cli' | 'monitor' | 'artifact';
 

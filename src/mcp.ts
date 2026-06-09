@@ -87,7 +87,8 @@ function toolList() {
   const selfModTools = [
     {
       name: 'singularity_set_persona',
-      description: 'Set a pane\'s persona. Requires the caller to hold a meta:configure capability for the target slot.',
+      description:
+        "Set a pane's persona. Requires the caller to hold a meta:configure capability for the target slot.",
       inputSchema: {
         type: 'object',
         properties: {

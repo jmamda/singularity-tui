@@ -33,7 +33,13 @@ export function PCStrip({ width }: Props) {
         ? color.amber
         : color.accentDim;
 
-  const headerGlyph = targeted ? '▶' : isEngaged ? shimmerGlyph(tick) : isFault ? glyph.fault : glyph.bullet;
+  const headerGlyph = targeted
+    ? '▶'
+    : isEngaged
+      ? shimmerGlyph(tick)
+      : isFault
+        ? glyph.fault
+        : glyph.bullet;
 
   // Last ~width-50 chars of output, on one line
   const tail = pc.output.join('').split('\n').slice(-1)[0] ?? '';
@@ -50,9 +56,13 @@ export function PCStrip({ width }: Props) {
         {headerGlyph} [5] PC{'  '}
       </Text>
       <Text color={s.color}>{s.label.padEnd(8)}</Text>
-      <Text color={trustColor}>{' '}t{Math.round(trustVal * 100)}%{'  '}</Text>
+      <Text color={trustColor}>
+        {' '}
+        t{Math.round(trustVal * 100)}%{'  '}
+      </Text>
       <Text color={color.inactive} wrap="truncate-end">
-        {pcCaps.length === 0 ? capStr : capStr}{tail ? '  ·  ' : ''}
+        {pcCaps.length === 0 ? capStr : capStr}
+        {tail ? '  ·  ' : ''}
       </Text>
       <Text color={color.text} wrap="truncate-end">
         {truncated}

@@ -39,7 +39,12 @@ export const demoAdapter: Adapter = {
       await new Promise((r) => setTimeout(r, 60));
     }
     // Fake cost so the meter shows something.
-    yield { type: 'cost', tokensIn: Math.max(1, Math.ceil(prompt.length / 4)), tokensOut: 80, usd: 0.0002 };
+    yield {
+      type: 'cost',
+      tokensIn: Math.max(1, Math.ceil(prompt.length / 4)),
+      tokensOut: 80,
+      usd: 0.0002,
+    };
     yield { type: 'status', status: 'DONE' };
   },
   async stop() {},

@@ -17,12 +17,17 @@ describe('makeSpawnCliAdapter (against real child processes)', () => {
       argsForPrompt: () => ['hello world'],
     });
     const events = await collect(adapter.send!('ignored'));
-    const text = events.filter((e) => e.type === 'token').map((e: any) => e.text).join('');
+    const text = events
+      .filter((e) => e.type === 'token')
+      .map((e: any) => e.text)
+      .join('');
     expect(text).toContain('hello world');
     expect(events[0]).toEqual({ type: 'status', status: 'ENGAGED' });
     expect(events.at(-1)).toEqual({ type: 'status', status: 'DONE' });
     // exactly one terminal status (no double-resolve from error+exit)
-    expect(events.filter((e) => e.type === 'status' && (e.status === 'DONE' || e.status === 'FAULT'))).toHaveLength(1);
+    expect(
+      events.filter((e) => e.type === 'status' && (e.status === 'DONE' || e.status === 'FAULT')),
+    ).toHaveLength(1);
   });
 
   it('emits FAULT exactly once when the binary does not exist', async () => {
@@ -50,7 +55,10 @@ describe('makeSpawnCliAdapter (against real child processes)', () => {
       pricing: { inPerM: 1, outPerM: 1 },
     });
     const events = await collect(adapter.send!('in'));
-    const text = events.filter((e) => e.type === 'token').map((e: any) => e.text).join('');
+    const text = events
+      .filter((e) => e.type === 'token')
+      .map((e: any) => e.text)
+      .join('');
     expect(text).toContain('A');
     expect(text).toContain('B');
     expect(events.some((e) => e.type === 'cost')).toBe(true);

@@ -7,10 +7,10 @@ export function fmtCost(usd: number): string {
   if (!Number.isFinite(usd) || usd <= 0) return '$0';
   if (usd < 0.001) return '<$0.001';
   if (usd < 0.01) return `$${usd.toFixed(3)}`; // $0.001 — $0.009
-  if (usd < 1) return `$${usd.toFixed(2)}`;    // $0.05
-  if (usd < 10) return `$${usd.toFixed(2)}`;   // $1.50
-  if (usd < 100) return `$${usd.toFixed(1)}`;  // $12.4
-  return `$${Math.round(usd)}`;                // $123
+  if (usd < 1) return `$${usd.toFixed(2)}`; // $0.05
+  if (usd < 10) return `$${usd.toFixed(2)}`; // $1.50
+  if (usd < 100) return `$${usd.toFixed(1)}`; // $12.4
+  return `$${Math.round(usd)}`; // $123
 }
 
 /** 3s · 47s · 1m12s · 14m · 1h12m */

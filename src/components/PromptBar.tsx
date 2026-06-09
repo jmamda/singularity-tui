@@ -25,12 +25,7 @@ export function PromptBar() {
     const q = asker?.pendingClarifications[0];
     const queued = asker?.pendingClarifications.length ?? 0;
     return (
-      <Box
-        borderStyle="double"
-        borderColor={color.amber}
-        flexDirection="column"
-        paddingX={1}
-      >
+      <Box borderStyle="double" borderColor={color.amber} flexDirection="column" paddingX={1}>
         <Box justifyContent="space-between">
           <Text color={color.amber} bold>
             ⚠ CLARIFY · [{clarifyingFor}] {asker?.label} is asking
@@ -64,17 +59,12 @@ export function PromptBar() {
         : '1-4 target · ! broadcast · ? vote · @plan · /cmd · /grammar';
 
   const borderColor =
-    broadcasting || targets.length > 0
-      ? color.primary
-      : isSlash
-        ? color.accent
-        : color.accentDim;
+    broadcasting || targets.length > 0 ? color.primary : isSlash ? color.accent : color.accentDim;
 
   const headerColor = borderColor;
 
-  const budgetStr = budget !== null
-    ? ` · ${fmtCost(total)} / ${fmtCost(budget)}`
-    : ` · ${fmtCost(total)}`;
+  const budgetStr =
+    budget !== null ? ` · ${fmtCost(total)} / ${fmtCost(budget)}` : ` · ${fmtCost(total)}`;
   const ctxStr =
     (awareness === 'roster' ? ' · ros' : '') +
     (autoNotes ? ' · auto' : '') +
@@ -83,24 +73,22 @@ export function PromptBar() {
     (notes.length > 0 ? ` · ${notes.length} note${notes.length === 1 ? '' : 's'}` : '');
 
   return (
-    <Box
-      borderStyle="double"
-      borderColor={borderColor}
-      flexDirection="column"
-      paddingX={1}
-    >
+    <Box borderStyle="double" borderColor={borderColor} flexDirection="column" paddingX={1}>
       <Box justifyContent="space-between">
         <Text color={headerColor} bold={targets.length > 0 || broadcasting}>
           ▶ {targetLabel}
         </Text>
         <Text color={color.inactive}>
-          [1-4] toggle · [!] bcast · [?] vote · [&gt;N] relay · [/] cmd{budgetStr}{ctxStr}
+          [1-4] toggle · [!] bcast · [?] vote · [&gt;N] relay · [/] cmd{budgetStr}
+          {ctxStr}
         </Text>
       </Box>
       <Box>
         <Text color={targets.length > 0 || broadcasting || isSlash ? color.white : color.inactive}>
           ▌ {draft || (targets.length > 0 ? '' : 'type a prompt — pick mode with the first char')}
-          <Text color={color.primary}>{targets.length > 0 || broadcasting || isSlash ? '_' : ''}</Text>
+          <Text color={color.primary}>
+            {targets.length > 0 || broadcasting || isSlash ? '_' : ''}
+          </Text>
         </Text>
       </Box>
     </Box>

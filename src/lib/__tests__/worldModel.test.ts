@@ -29,8 +29,14 @@ const EMPTY_AGENT: AgentSnapshot = { trust: {}, caps: [], costUsd: 0 };
 async function makeFixture(): Promise<string> {
   const root = join(tmpdir(), `worldmodel-fixture-${Date.now()}`);
   await fs.mkdir(join(root, 'src'), { recursive: true });
-  await fs.writeFile(join(root, 'src', 'a.ts'), `export function alpha() { return 1; }\nexport const X = 2;\n`);
-  await fs.writeFile(join(root, 'src', 'b.ts'), `import { alpha } from './a';\nexport function beta() { return alpha(); }\n`);
+  await fs.writeFile(
+    join(root, 'src', 'a.ts'),
+    `export function alpha() { return 1; }\nexport const X = 2;\n`,
+  );
+  await fs.writeFile(
+    join(root, 'src', 'b.ts'),
+    `import { alpha } from './a';\nexport function beta() { return alpha(); }\n`,
+  );
   return root;
 }
 

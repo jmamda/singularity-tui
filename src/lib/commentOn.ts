@@ -58,4 +58,4 @@ export function resolveArtifactRef(ref: string, artifacts: Artifact[]): Artifact
 }
 
 export const COMMENT_HINT_FOR_MODEL =
-  'To comment on another pane\'s artifact, emit `COMMENT-ON: #N :: <your critique or suggestion>` on its own line. Use the #N shown in [recent artifacts] (or the title) to refer to one. Use this for inline review, not for general discussion.';
+  "To comment on another pane's artifact, emit `COMMENT-ON: #N :: <your critique or suggestion>` on its own line. Use the #N shown in [recent artifacts] (or the title) to refer to one. Use this for inline review, not for general discussion.";

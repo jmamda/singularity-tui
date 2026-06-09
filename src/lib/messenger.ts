@@ -55,7 +55,12 @@ async function sendSlack(text: string): Promise<MessageResult> {
     body: JSON.stringify({ text }),
     signal: AbortSignal.timeout(10_000),
   });
-  return { ok: r.ok, platform: 'slack', status: r.status, reason: r.ok ? undefined : await r.text() };
+  return {
+    ok: r.ok,
+    platform: 'slack',
+    status: r.status,
+    reason: r.ok ? undefined : await r.text(),
+  };
 }
 
 async function sendDiscord(text: string): Promise<MessageResult> {
@@ -66,7 +71,12 @@ async function sendDiscord(text: string): Promise<MessageResult> {
     body: JSON.stringify({ content: text }),
     signal: AbortSignal.timeout(10_000),
   });
-  return { ok: r.ok, platform: 'discord', status: r.status, reason: r.ok ? undefined : await r.text() };
+  return {
+    ok: r.ok,
+    platform: 'discord',
+    status: r.status,
+    reason: r.ok ? undefined : await r.text(),
+  };
 }
 
 async function sendTelegram(text: string): Promise<MessageResult> {
@@ -78,12 +88,21 @@ async function sendTelegram(text: string): Promise<MessageResult> {
     body: JSON.stringify({ chat_id: chatId, text }),
     signal: AbortSignal.timeout(10_000),
   });
-  return { ok: r.ok, platform: 'telegram', status: r.status, reason: r.ok ? undefined : await r.text() };
+  return {
+    ok: r.ok,
+    platform: 'telegram',
+    status: r.status,
+    reason: r.ok ? undefined : await r.text(),
+  };
 }
 
 export async function sendMessage(input: MessageInput): Promise<MessageResult> {
   if (!isConfigured(input.platform)) {
-    return { ok: false, platform: input.platform, reason: 'platform not configured (env vars missing)' };
+    return {
+      ok: false,
+      platform: input.platform,
+      reason: 'platform not configured (env vars missing)',
+    };
   }
   try {
     if (input.platform === 'slack') return await sendSlack(input.text);

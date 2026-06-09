@@ -18,7 +18,10 @@ describe('parseProviderUri', () => {
     });
   });
   it('parses ollama', () => {
-    expect(parseProviderUri('ollama://llama3:8b')).toEqual({ provider: 'ollama', model: 'llama3:8b' });
+    expect(parseProviderUri('ollama://llama3:8b')).toEqual({
+      provider: 'ollama',
+      model: 'llama3:8b',
+    });
   });
   it('returns null for unknown', () => {
     expect(parseProviderUri('claude:foo')).toBeNull();

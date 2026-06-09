@@ -24,9 +24,7 @@ const SYMBOLIC: Record<string, number> = {
  * Returns the parsed confidence (0..1) and the start/end indices of the
  * matched line so the caller can strip it before displaying.
  */
-export function extractConfidence(
-  text: string,
-): { value: number; matchedText: string } | null {
+export function extractConfidence(text: string): { value: number; matchedText: string } | null {
   const m = text.match(CONFIDENCE_RE);
   if (!m || m.index === undefined) return null;
   const raw = (m[1] ?? '').trim().toLowerCase();
@@ -62,7 +60,10 @@ export function confidenceBadge(v: number | undefined): string {
   return 'LO ';
 }
 
-export function confidenceColor(v: number | undefined, palette: { accent: string; amber: string; primary: string; inactive: string }): string {
+export function confidenceColor(
+  v: number | undefined,
+  palette: { accent: string; amber: string; primary: string; inactive: string },
+): string {
   if (v === undefined) return palette.inactive;
   if (v >= 0.85) return palette.accent;
   if (v >= 0.55) return palette.amber;

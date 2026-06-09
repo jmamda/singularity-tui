@@ -16,7 +16,11 @@ const SPECS = [
   { slot: 1 as const, label: 'CLAUDE', command: 'claude' },
   { slot: 2 as const, label: 'OPENCODE', command: 'opencode' },
   { slot: 3 as const, label: 'CODEX', command: 'codex' },
-  { slot: 4 as const, label: 'LANGGRAPH', command: 'echo "langgraph monitor placeholder — set LANGSMITH_API_KEY"' },
+  {
+    slot: 4 as const,
+    label: 'LANGGRAPH',
+    command: 'echo "langgraph monitor placeholder — set LANGSMITH_API_KEY"',
+  },
 ];
 
 function getFlag(name: string, fallback?: string): string | undefined {
@@ -39,15 +43,22 @@ async function cmdLaunch() {
   await saveState({ sessions, createdAt: Date.now() });
   process.stdout.write('✓ launched 4 sessions:\n');
   for (const s of sessions) {
-    process.stdout.write(`  [${s.slot}] ${s.label}  sid=${s.sessionId.slice(0, 12)}  tty=${s.tty}\n`);
+    process.stdout.write(
+      `  [${s.slot}] ${s.label}  sid=${s.sessionId.slice(0, 12)}  tty=${s.tty}\n`,
+    );
   }
 }
 
 async function cmdDown() {
   const state = await loadState();
-  if (!state) { process.stdout.write('no active sessions\n'); return; }
+  if (!state) {
+    process.stdout.write('no active sessions\n');
+    return;
+  }
   for (const s of state.sessions) {
-    try { await killSession(s.sessionId); } catch {}
+    try {
+      await killSession(s.sessionId);
+    } catch {}
   }
   await clearState();
   process.stdout.write('✓ closed sessions and cleared state\n');
@@ -64,7 +75,9 @@ async function cmdStatus() {
   }
   process.stdout.write(`iTerm2 mode: active (since ${new Date(state.createdAt).toISOString()})\n`);
   for (const s of state.sessions) {
-    process.stdout.write(`  [${s.slot}] ${s.label}  sid=${s.sessionId.slice(0, 12)}  tty=${s.tty}\n`);
+    process.stdout.write(
+      `  [${s.slot}] ${s.label}  sid=${s.sessionId.slice(0, 12)}  tty=${s.tty}\n`,
+    );
   }
 }
 
@@ -90,7 +103,9 @@ async function main() {
     const persona = getFlag('persona');
     const json = hasFlag('json');
     if (!target || !prompt) {
-      console.error('usage: singularity run --target <id> --prompt "..." [--persona "..."] [--json]');
+      console.error(
+        'usage: singularity run --target <id> --prompt "..." [--persona "..."] [--json]',
+      );
       process.exit(2);
     }
     const code = await runHeadless({ target, prompt, persona, json });
@@ -102,7 +117,9 @@ async function main() {
     const target = getFlag('target');
     const template = getFlag('on') ?? 'explain the latest change to {{file}}';
     if (!dir || !target) {
-      console.error('usage: singularity watch <dir> --target <id> [--on "<template with {{file}}>"]');
+      console.error(
+        'usage: singularity watch <dir> --target <id> [--on "<template with {{file}}>"]',
+      );
       process.exit(2);
     }
     await runWatch({ dir, target, template });
@@ -148,8 +165,10 @@ async function main() {
       const { spawn } = await import('node:child_process');
       const url = `http://localhost:${port}`;
       try {
-        if (process.platform === 'darwin') spawn('open', [url], { detached: true, stdio: 'ignore' });
-        else if (process.platform === 'win32') spawn('cmd', ['/c', 'start', url], { detached: true, stdio: 'ignore' });
+        if (process.platform === 'darwin')
+          spawn('open', [url], { detached: true, stdio: 'ignore' });
+        else if (process.platform === 'win32')
+          spawn('cmd', ['/c', 'start', url], { detached: true, stdio: 'ignore' });
         else spawn('xdg-open', [url], { detached: true, stdio: 'ignore' });
       } catch {
         /* ignore */
@@ -196,7 +215,9 @@ async function main() {
     const { runHeadless } = await import('./headless.js');
     if (!sub || sub === 'list') {
       const names = await listRecipes();
-      process.stdout.write(names.length ? names.map((n) => `  ${n}`).join('\n') + '\n' : 'no recipes found\n');
+      process.stdout.write(
+        names.length ? names.map((n) => `  ${n}`).join('\n') + '\n' : 'no recipes found\n',
+      );
       return;
     }
     const recipe = await loadRecipe(sub);
@@ -228,7 +249,9 @@ async function main() {
     }
     const result = await runRecipe(recipe, dispatcher, vars);
     if (!result.ok) {
-      process.stderr.write(`\nrecipe failed at step ${result.failed?.step}: ${result.failed?.reason}\n`);
+      process.stderr.write(
+        `\nrecipe failed at step ${result.failed?.step}: ${result.failed?.reason}\n`,
+      );
       process.exit(1);
     }
     process.stdout.write(`\n✓ recipe '${recipe.name}' ran ${result.stepsRun} steps\n`);
@@ -307,7 +330,9 @@ keys: [1-4] toggle target · [Tab] cycle single target · [↑↓] prompt histor
     } catch {
       /* ignore */
     }
-    process.stderr.write(`\n[singularity] ${label}: ${err instanceof Error ? err.stack ?? err.message : String(err)}\n`);
+    process.stderr.write(
+      `\n[singularity] ${label}: ${err instanceof Error ? (err.stack ?? err.message) : String(err)}\n`,
+    );
     process.exit(1);
   };
   process.on('unhandledRejection', bail('unhandled rejection'));

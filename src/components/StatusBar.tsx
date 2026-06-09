@@ -51,13 +51,7 @@ export function StatusBar() {
     );
   });
 
-  const lgGlyph = langgraph
-    ? langgraph.error
-      ? '⚠'
-      : langgraph.active > 0
-        ? '◢'
-        : '✓'
-    : null;
+  const lgGlyph = langgraph ? (langgraph.error ? '⚠' : langgraph.active > 0 ? '◢' : '✓') : null;
   const lgColor = langgraph
     ? langgraph.error
       ? color.amber
@@ -79,10 +73,14 @@ export function StatusBar() {
         </Text>
         <Text color={color.inactive}>// </Text>
         {chips.flatMap((c, i) =>
-          i === 0 ? [c] : [
-            <Text key={`s${i}`} color={color.faint}> </Text>,
-            c,
-          ],
+          i === 0
+            ? [c]
+            : [
+                <Text key={`s${i}`} color={color.faint}>
+                  {' '}
+                </Text>,
+                c,
+              ],
         )}
         {broadcast ? (
           <Text color={color.primary} bold>
@@ -92,19 +90,15 @@ export function StatusBar() {
       </Box>
       <Box>
         <Text color={color.accent}>{fmtCost(total)}</Text>
-        {notes.length > 0 ? (
-          <Text color={color.inactive}> · {notes.length}n</Text>
-        ) : null}
-        {artifacts.length > 0 ? (
-          <Text color={color.inactive}> · {artifacts.length}a</Text>
-        ) : null}
+        {notes.length > 0 ? <Text color={color.inactive}> · {notes.length}n</Text> : null}
+        {artifacts.length > 0 ? <Text color={color.inactive}> · {artifacts.length}a</Text> : null}
         {lgGlyph ? (
           <>
             <Text color={color.inactive}> · </Text>
             <Text color={lgColor}>{lgGlyph}lg</Text>
           </>
         ) : null}
-        <Text color={color.inactive}>  {now}</Text>
+        <Text color={color.inactive}> {now}</Text>
       </Box>
     </Box>
   );

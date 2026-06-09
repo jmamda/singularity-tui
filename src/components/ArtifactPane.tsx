@@ -127,8 +127,7 @@ export function ArtifactPane({ targeted, width, height }: Props) {
   const detailW = Math.max(20, width - listW - 4);
 
   // Detail = live partial if it's selected, otherwise the current artifact
-  const current =
-    listEntries[selectedListIdx >= 0 ? selectedListIdx : 0] ?? null;
+  const current = listEntries[selectedListIdx >= 0 ? selectedListIdx : 0] ?? null;
 
   const windowStart = Math.max(
     0,
@@ -146,9 +145,8 @@ export function ArtifactPane({ targeted, width, height }: Props) {
   const flashOn = tick % 2 === 0;
   const flashColor = flashOn ? color.white : color.accent;
 
-  const producing = partials.length > 0
-    ? partials.map((p) => `[${p.slot}] producing…`).join(' · ')
-    : null;
+  const producing =
+    partials.length > 0 ? partials.map((p) => `[${p.slot}] producing…`).join(' · ') : null;
 
   return (
     <Box flexDirection="column" width={width} height={height}>
@@ -159,7 +157,9 @@ export function ArtifactPane({ targeted, width, height }: Props) {
         </Text>
         <Text color={color.inactive}>
           {filterMode ? (
-            <>filter: <Text color={color.amber}>{filterText || '_'}</Text></>
+            <>
+              filter: <Text color={color.amber}>{filterText || '_'}</Text>
+            </>
           ) : artifacts.length === 0 ? (
             'awaiting code blocks…'
           ) : (
@@ -167,17 +167,13 @@ export function ArtifactPane({ targeted, width, height }: Props) {
           )}
         </Text>
       </Box>
-      <Box
-        borderStyle="single"
-        borderColor={borderColor}
-        height={height - 3}
-        width={width}
-      >
+      <Box borderStyle="single" borderColor={borderColor} height={height - 3} width={width}>
         {/* LIST */}
         <Box flexDirection="column" width={listW} paddingX={1}>
           {listEntries.length === 0 ? (
             <Text color={color.inactive}>
-              {glyph.awaiting} {filterText ? `no matches for "${filterText}"` : 'no artifacts yet'} {glyph.awaiting}
+              {glyph.awaiting} {filterText ? `no matches for "${filterText}"` : 'no artifacts yet'}{' '}
+              {glyph.awaiting}
             </Text>
           ) : (
             windowItems.map((e, i) => {
@@ -203,8 +199,7 @@ export function ArtifactPane({ targeted, width, height }: Props) {
                   {e.pinned ? '📌' : isPartial ? '◢' : ' '}
                   <Text color={color.inactive}>{seqLabel}</Text>
                   <Text color={c}>[{e.slot}]</Text>{' '}
-                  <Text color={color.accent}>{e.lang.padEnd(5)}</Text>{' '}
-                  {e.title}
+                  <Text color={color.accent}>{e.lang.padEnd(5)}</Text> {e.title}
                   {e.commentCount && e.commentCount > 0 ? (
                     <Text color={color.amber}> 💬{e.commentCount}</Text>
                   ) : null}
@@ -220,8 +215,10 @@ export function ArtifactPane({ targeted, width, height }: Props) {
             <>
               <Text color={color.inactive} wrap="truncate-end">
                 {glyph.bullet}
-                {current.seq !== undefined ? <Text color={color.accent}> #{current.seq}</Text> : null}
-                {' '}{current.lang} · from [{current.slot}] {current.label} ·{' '}
+                {current.seq !== undefined ? (
+                  <Text color={color.accent}> #{current.seq}</Text>
+                ) : null}{' '}
+                {current.lang} · from [{current.slot}] {current.label} ·{' '}
                 {current.kind === 'partial' ? (
                   <Text color={color.primary}>streaming…</Text>
                 ) : (
@@ -229,8 +226,9 @@ export function ArtifactPane({ targeted, width, height }: Props) {
                 )}
               </Text>
               {(() => {
-                const currentComments =
-                  current.artifactId ? (comments[current.artifactId] ?? []) : [];
+                const currentComments = current.artifactId
+                  ? (comments[current.artifactId] ?? [])
+                  : [];
                 const commentRows = Math.min(currentComments.length, 3);
                 const codeRows = Math.max(2, innerHeight - commentRows - (commentRows > 0 ? 1 : 0));
                 const codeLines = detailLines.slice(0, codeRows);
@@ -250,9 +248,7 @@ export function ArtifactPane({ targeted, width, height }: Props) {
                     ) : null}
                     {commentRows > 0 ? (
                       <Box flexDirection="column">
-                        <Text color={color.faint}>
-                          {'─'.repeat(Math.max(4, detailW - 8))}
-                        </Text>
+                        <Text color={color.faint}>{'─'.repeat(Math.max(4, detailW - 8))}</Text>
                         {currentComments.slice(-3).map((cm, idx, arr) => {
                           const cc = SLOT_COLOR[cm.fromSlot] ?? color.white;
                           const isLast = idx === arr.length - 1;
@@ -260,7 +256,9 @@ export function ArtifactPane({ targeted, width, height }: Props) {
                           return (
                             <Text key={cm.id} color={color.text} wrap="truncate-end">
                               <Text color={color.inactive}>{branch}</Text>
-                              <Text color={cc}>💬 [{cm.fromSlot}] {cm.fromLabel}</Text>
+                              <Text color={cc}>
+                                💬 [{cm.fromSlot}] {cm.fromLabel}
+                              </Text>
                               <Text color={color.inactive}>: </Text>
                               {cm.text}
                             </Text>
@@ -273,9 +271,7 @@ export function ArtifactPane({ targeted, width, height }: Props) {
               })()}
             </>
           ) : (
-            <Text color={color.inactive}>
-              code blocks streamed from any pane appear here
-            </Text>
+            <Text color={color.inactive}>code blocks streamed from any pane appear here</Text>
           )}
         </Box>
       </Box>

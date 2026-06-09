@@ -118,7 +118,10 @@ register({
       if (!dk.acknowledged) return { ok: false, message: `${dk.reason} (id ${dk.id})` };
     }
     const { shadowWrite } = await import('../lib/shadowfs.js');
-    const entry = await shadowWrite(path, pane.output.join(''), { bySlot: slot, label: `save [${slot}]` });
+    const entry = await shadowWrite(path, pane.output.join(''), {
+      bySlot: slot,
+      label: `save [${slot}]`,
+    });
     store.adjustTrust(slot, TRUST_DELTAS.cleanExecution);
     return { ok: true, message: `saved [${slot}] → ${path} (journaled ${entry.id.slice(0, 12)})` };
   },
@@ -156,7 +159,10 @@ register({
       const a = s.artifacts.find((x) => x.seq === seqA);
       const b = s.artifacts.find((x) => x.seq === seqB);
       if (!a || !b) return { ok: false, message: 'artifact(s) not found' };
-      return { ok: true, message: `#${seqA} vs #${seqB}\n${renderUnifiedDiff(a.content, b.content)}` };
+      return {
+        ok: true,
+        message: `#${seqA} vs #${seqB}\n${renderUnifiedDiff(a.content, b.content)}`,
+      };
     }
 
     const slotA = Number(args[0]);
@@ -276,14 +282,18 @@ register({
     try {
       const { rollbackTo, listSnapshots, listJournal } = await import('../lib/shadowfs.js');
       const { TRUST_DELTAS } = await import('../lib/sentinel.js');
-      const target = id === 'root' ? 'root' : (listSnapshots().find((s) => s.id.startsWith(id))?.id ?? id);
+      const target =
+        id === 'root' ? 'root' : (listSnapshots().find((s) => s.id.startsWith(id))?.id ?? id);
       // Charge trust for every pane that contributed to the rolled-back writes
       const slots = new Set<number>();
       for (const e of listJournal()) if (e.bySlot) slots.add(e.bySlot);
       const r = await rollbackTo(target);
       for (const slot of slots) store.adjustTrust(slot, TRUST_DELTAS.rollback);
       const errs = r.errors.length > 0 ? `  (${r.errors.length} errors)` : '';
-      return { ok: true, message: `rolled back: ${r.restored} restored · ${r.deleted} deleted${errs}` };
+      return {
+        ok: true,
+        message: `rolled back: ${r.restored} restored · ${r.deleted} deleted${errs}`,
+      };
     } catch (e) {
       return { ok: false, message: String(e) };
     }
@@ -379,8 +389,9 @@ register({
   summary: 'show running cost across panes',
   usage: '/cost',
   handler: () => {
-    const total = store.getState().panes
-      .map((p) => p.metrics.costUsd ?? 0)
+    const total = store
+      .getState()
+      .panes.map((p) => p.metrics.costUsd ?? 0)
       .reduce((a, b) => a + b, 0);
     return { ok: true, message: `total session cost: $${total.toFixed(4)}` };
   },
@@ -456,9 +467,11 @@ register({
       return { ok: false, message: '/grant <slot 1-5> <kind:pattern> [seconds]' };
     }
     const parsed = parseCapabilityArg(args[1] ?? '');
-    if (!parsed) return { ok: false, message: 'cap form: read:src/**  write:dist/**  exec:^npm  net:api.x' };
+    if (!parsed)
+      return { ok: false, message: 'cap form: read:src/**  write:dist/**  exec:^npm  net:api.x' };
     const secs = Number(args[2]);
-    const expiresAt = Number.isFinite(secs) && secs > 0 ? Date.now() + secs * 1000 : Number.POSITIVE_INFINITY;
+    const expiresAt =
+      Number.isFinite(secs) && secs > 0 ? Date.now() + secs * 1000 : Number.POSITIVE_INFINITY;
     store.addCapability({
       id: nextCapabilityId(),
       kind: parsed.kind,
@@ -486,7 +499,8 @@ register({
     const m = spec.match(/^([rwxnm]):(.+)$/i);
     if (!m) return { ok: false, message: '/revoke <id> or /revoke <slot> <kind:pattern>' };
     const target = s.capabilities.find(
-      (c) => c.slot === slot && c.pattern === m[2] && c.kind[0]!.toLowerCase() === m[1]!.toLowerCase(),
+      (c) =>
+        c.slot === slot && c.pattern === m[2] && c.kind[0]!.toLowerCase() === m[1]!.toLowerCase(),
     );
     if (!target) return { ok: false, message: 'no matching capability' };
     store.revokeCapability(target.id);
@@ -626,7 +640,10 @@ register({
       target: new URL(url).hostname,
     });
     if (!cap.ok) {
-      return { ok: false, message: `permission denied: /grant ${slot} net:${new URL(url).hostname}` };
+      return {
+        ok: false,
+        message: `permission denied: /grant ${slot} net:${new URL(url).hostname}`,
+      };
     }
     try {
       const r = await fetch(url, { signal: AbortSignal.timeout(15_000) });
@@ -665,7 +682,10 @@ register({
       );
       const data: any = await r.json();
       const summary = data.AbstractText || data.Answer || '(no abstract)';
-      const related = (data.RelatedTopics ?? []).slice(0, 5).map((t: any) => `- ${t.Text}`).join('\n');
+      const related = (data.RelatedTopics ?? [])
+        .slice(0, 5)
+        .map((t: any) => `- ${t.Text}`)
+        .join('\n');
       const block = `[websearch: ${q}]\n${summary}\n\n${related}\n[/websearch]\n\n`;
       store.setPromptDraft(block + store.getState().promptDraft);
       return { ok: true, message: `searched (${summary.length} chars; prepended)` };
@@ -792,7 +812,8 @@ const recentPromptsRing: string[] = [];
 
 register({
   name: 'world',
-  summary: 'world-model queries (describe | callers | impact | know | why | diff | uncertain | next | refresh)',
+  summary:
+    'world-model queries (describe | callers | impact | know | why | diff | uncertain | next | refresh)',
   usage: '/world <subcommand> [args]',
   handler: async ({ args, targetSlots }) => {
     const sub = args[0] ?? 'describe';
@@ -842,7 +863,8 @@ register({
       default:
         return {
           ok: false,
-          message: '/world <describe|callers <sym>|impact <path>|know <topic>|why [slot]|diff|uncertain|next|refresh>',
+          message:
+            '/world <describe|callers <sym>|impact <path>|know <topic>|why [slot]|diff|uncertain|next|refresh>',
         };
     }
     lastWorldCtx = ctx;
@@ -864,14 +886,17 @@ register({
   handler: async ({ args, targetSlots }) => {
     const platform = args[0];
     const text = args.slice(1).join(' ');
-    if (!platform || !text) return { ok: false, message: '/msg <slack|discord|telegram|all> <text>' };
+    if (!platform || !text)
+      return { ok: false, message: '/msg <slack|discord|telegram|all> <text>' };
     const slot = targetSlots[0] ?? 1;
-    const { sendMessage, broadcast, platformHostname, configuredPlatforms } = await import('../lib/messenger.js');
+    const { sendMessage, broadcast, platformHostname, configuredPlatforms } =
+      await import('../lib/messenger.js');
     const { checkCapabilities } = await import('../lib/capabilities.js');
 
     if (platform === 'all') {
       const targets = configuredPlatforms();
-      if (targets.length === 0) return { ok: false, message: 'no messengers configured (set SLACK_WEBHOOK_URL etc.)' };
+      if (targets.length === 0)
+        return { ok: false, message: 'no messengers configured (set SLACK_WEBHOOK_URL etc.)' };
       // capability check per host
       for (const p of targets) {
         const cap = checkCapabilities(store.getState().capabilities, {
@@ -880,7 +905,10 @@ register({
           target: platformHostname(p),
         });
         if (!cap.ok) {
-          return { ok: false, message: `permission denied: /grant ${slot} net:${platformHostname(p)}` };
+          return {
+            ok: false,
+            message: `permission denied: /grant ${slot} net:${platformHostname(p)}`,
+          };
         }
       }
       const results = await broadcast(text);
@@ -896,7 +924,10 @@ register({
       target: platformHostname(platform),
     });
     if (!cap.ok) {
-      return { ok: false, message: `permission denied: /grant ${slot} net:${platformHostname(platform)}` };
+      return {
+        ok: false,
+        message: `permission denied: /grant ${slot} net:${platformHostname(platform)}`,
+      };
     }
     const r = await sendMessage({ platform, text });
     return { ok: r.ok, message: r.ok ? `sent to ${platform}` : `${platform}: ${r.reason}` };
@@ -918,7 +949,10 @@ register({
       target: new URL(url).hostname,
     });
     if (!cap.ok) {
-      return { ok: false, message: `permission denied: /grant ${slot} net:${new URL(url).hostname}` };
+      return {
+        ok: false,
+        message: `permission denied: /grant ${slot} net:${new URL(url).hostname}`,
+      };
     }
     const { openUrl } = await import('../lib/browse.js');
     const r = await openUrl(url);
@@ -938,7 +972,11 @@ register({
     const slot = targetSlots[0] ?? 1;
     const host = process.env.SMTP_HOST ?? 'smtp.gmail.com';
     const { checkCapabilities } = await import('../lib/capabilities.js');
-    const cap = checkCapabilities(store.getState().capabilities, { slot, kind: 'net', target: host });
+    const cap = checkCapabilities(store.getState().capabilities, {
+      slot,
+      kind: 'net',
+      target: host,
+    });
     if (!cap.ok) {
       return { ok: false, message: `permission denied: /grant ${slot} net:${host}` };
     }
@@ -962,13 +1000,18 @@ register({
     const { parseStart, parseDuration, renderIcs } = await import('../lib/calendar.js');
     const start = parseStart(startStr);
     const duration = parseDuration(durStr);
-    if (!start) return { ok: false, message: 'bad start (use ISO 8601, e.g. 2026-06-05T10:00:00Z)' };
+    if (!start)
+      return { ok: false, message: 'bad start (use ISO 8601, e.g. 2026-06-05T10:00:00Z)' };
     if (duration === null) return { ok: false, message: 'bad duration (use 60m or 1h30m)' };
 
     const slot = targetSlots[0] ?? 1;
     const path = `event-${Date.now()}.ics`;
     const { checkCapabilities } = await import('../lib/capabilities.js');
-    const cap = checkCapabilities(store.getState().capabilities, { slot, kind: 'write', target: path });
+    const cap = checkCapabilities(store.getState().capabilities, {
+      slot,
+      kind: 'write',
+      target: path,
+    });
     if (!cap.ok) return { ok: false, message: `permission denied: /grant ${slot} write:${path}` };
     const ics = renderIcs({ title, start, durationMinutes: duration });
     const { shadowWrite } = await import('../lib/shadowfs.js');
@@ -1000,7 +1043,9 @@ register({
     if (t.length === 0) {
       return { ok: true, message: 'no triggers configured (edit ~/.singularity/triggers.json)' };
     }
-    const lines = t.map((x) => `  ${x.id} · ${x.source} ${x.match} → [${x.slot}] ${x.prompt.slice(0, 40)}`);
+    const lines = t.map(
+      (x) => `  ${x.id} · ${x.source} ${x.match} → [${x.slot}] ${x.prompt.slice(0, 40)}`,
+    );
     return { ok: true, message: `triggers:\n${lines.join('\n')}` };
   },
 });

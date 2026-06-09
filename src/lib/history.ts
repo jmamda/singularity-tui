@@ -15,9 +15,5 @@ export async function loadHistory(slot: Slot): Promise<string[]> {
 
 export async function saveHistory(slot: Slot, items: string[]): Promise<void> {
   await fs.mkdir(HISTORY_DIR, { recursive: true });
-  await fs.writeFile(
-    join(HISTORY_DIR, `${slot}.json`),
-    JSON.stringify(items.slice(-100)),
-    'utf8',
-  );
+  await fs.writeFile(join(HISTORY_DIR, `${slot}.json`), JSON.stringify(items.slice(-100)), 'utf8');
 }

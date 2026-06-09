@@ -15,9 +15,11 @@ export async function openUrl(url: string): Promise<{ ok: boolean; reason?: stri
   }
   const platform = process.platform;
   const cmd =
-    platform === 'darwin' ? { c: 'open', a: [url] }
-    : platform === 'win32' ? { c: 'cmd', a: ['/c', 'start', url] }
-    : { c: 'xdg-open', a: [url] };
+    platform === 'darwin'
+      ? { c: 'open', a: [url] }
+      : platform === 'win32'
+        ? { c: 'cmd', a: ['/c', 'start', url] }
+        : { c: 'xdg-open', a: [url] };
   return new Promise((resolve) => {
     try {
       const p = spawn(cmd.c, cmd.a, { stdio: 'ignore', detached: true });

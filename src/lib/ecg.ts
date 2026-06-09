@@ -24,9 +24,10 @@ export function advanceEcg(
   frame: number,
 ): number[] {
   // Ensure correct size
-  const buf = buffer.length === width
-    ? buffer.slice()
-    : Array.from({ length: width }, (_, i) => buffer[buffer.length - width + i] ?? 0);
+  const buf =
+    buffer.length === width
+      ? buffer.slice()
+      : Array.from({ length: width }, (_, i) => buffer[buffer.length - width + i] ?? 0);
 
   buf.shift();
 

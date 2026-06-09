@@ -25,7 +25,9 @@ function topLanguages(graph: GraphView): Array<[string, number]> {
 
 export function describe(ctx: WorldContext): QueryResult {
   const fileCount = ctx.graph.files.length;
-  const langs = topLanguages(ctx.graph).map(([lang, n]) => `${lang} (${n})`).join(', ');
+  const langs = topLanguages(ctx.graph)
+    .map(([lang, n]) => `${lang} (${n})`)
+    .join(', ');
   const commits = ctx.git?.recentSubjects ?? [];
   const branch = ctx.git?.branch ?? '(no git)';
   const lines: string[] = [];
@@ -129,7 +131,8 @@ export function diff(ctx: WorldContext, lastCtx: WorldContext | null): QueryResu
   lines.push(`  dirty paths: ${prevDirty} → ${currDirty}`);
   const prevTcOk = lastCtx.build.typecheck.ok;
   const currTcOk = ctx.build.typecheck.ok;
-  if (prevTcOk !== currTcOk) lines.push(`  typecheck: ${prevTcOk ? 'ok' : 'fail'} → ${currTcOk ? 'ok' : 'fail'}`);
+  if (prevTcOk !== currTcOk)
+    lines.push(`  typecheck: ${prevTcOk ? 'ok' : 'fail'} → ${currTcOk ? 'ok' : 'fail'}`);
   return { ok: true, message: lines.join('\n') };
 }
 
@@ -158,7 +161,8 @@ export function uncertain(ctx: WorldContext): QueryResult {
   return { ok: true, message: 'Uncertain areas:\n' + gaps.map((g) => `  - ${g}`).join('\n') };
 }
 
-const VERB_RE = /\b(add|fix|refactor|run|test|build|remove|rename|move|implement|deploy|review|check|update|debug)\b/i;
+const VERB_RE =
+  /\b(add|fix|refactor|run|test|build|remove|rename|move|implement|deploy|review|check|update|debug)\b/i;
 const NOUN_RE = /\b([A-Za-z_][A-Za-z0-9_]{2,})\b/g;
 
 function lastVerb(prompts: string[]): string | null {
@@ -180,7 +184,8 @@ function lastNoun(prompts: string[]): string | null {
 }
 
 export function nextLikelyPrompt(_ctx: WorldContext, recentPrompts: string[]): QueryResult {
-  if (recentPrompts.length === 0) return { ok: true, message: 'No prior prompts — cannot predict next.' };
+  if (recentPrompts.length === 0)
+    return { ok: true, message: 'No prior prompts — cannot predict next.' };
   const verb = lastVerb(recentPrompts) ?? 'review';
   const noun = lastNoun(recentPrompts) ?? 'the change';
   return { ok: true, message: `Likely next prompt: "${verb} ${noun}"` };

@@ -180,8 +180,7 @@ export const store = {
     return () => listeners.delete(l);
   },
 
-  registerPane: (pane: PaneState) =>
-    setState((s) => ({ ...s, panes: [...s.panes, pane] })),
+  registerPane: (pane: PaneState) => setState((s) => ({ ...s, panes: [...s.panes, pane] })),
 
   setStatus: (slot: Slot, status: PaneStatus) =>
     updatePane(slot, (p) => ({
@@ -193,8 +192,7 @@ export const store = {
   appendOutput: (slot: Slot, text: string) =>
     updatePane(slot, (p) => ({ ...p, output: [...p.output, text] })),
 
-  clearOutput: (slot: Slot) =>
-    updatePane(slot, (p) => ({ ...p, output: [] })),
+  clearOutput: (slot: Slot) => updatePane(slot, (p) => ({ ...p, output: [] })),
 
   setTargets: (slots: Slot[]) =>
     setState((s) => ({ ...s, targetSlots: [...new Set(slots)].sort() as Slot[] })),
@@ -204,7 +202,7 @@ export const store = {
       const has = s.targetSlots.includes(slot);
       const next = has
         ? s.targetSlots.filter((x) => x !== slot)
-        : [...s.targetSlots, slot].sort() as Slot[];
+        : ([...s.targetSlots, slot].sort() as Slot[]);
       return { ...s, targetSlots: next };
     }),
 
@@ -215,28 +213,23 @@ export const store = {
       return { ...s, targetSlots: [next] };
     }),
 
-  setPromptDraft: (text: string) =>
-    setState((s) => ({ ...s, promptDraft: text })),
+  setPromptDraft: (text: string) => setState((s) => ({ ...s, promptDraft: text })),
 
   setMetrics: (slot: Slot, patch: Partial<PaneMetrics>) =>
     updatePane(slot, (p) => ({ ...p, metrics: { ...p.metrics, ...patch } })),
 
   setItermMode: (on: boolean) => setState((s) => ({ ...s, itermMode: on })),
 
-  toggleLock: (slot: Slot) =>
-    updatePane(slot, (p) => ({ ...p, locked: !p.locked })),
+  toggleLock: (slot: Slot) => updatePane(slot, (p) => ({ ...p, locked: !p.locked })),
 
-  setSearch: (pattern: string | null) =>
-    setState((s) => ({ ...s, searchPattern: pattern })),
+  setSearch: (pattern: string | null) => setState((s) => ({ ...s, searchPattern: pattern })),
 
-  setPendingProfile: (name: string | null) =>
-    setState((s) => ({ ...s, pendingProfile: name })),
+  setPendingProfile: (name: string | null) => setState((s) => ({ ...s, pendingProfile: name })),
 
   setRemoteSessionId: (slot: Slot, id: string | undefined) =>
     updatePane(slot, (p) => ({ ...p, remoteSessionId: id })),
 
-  addCost: (usd: number) =>
-    setState((s) => ({ ...s, totalCostUsd: s.totalCostUsd + usd })),
+  addCost: (usd: number) => setState((s) => ({ ...s, totalCostUsd: s.totalCostUsd + usd })),
 
   addArtifact: (artifact: Omit<Artifact, 'seq'>) =>
     setState((s) => {
@@ -265,11 +258,9 @@ export const store = {
       return { ...s, selectedArtifactIdx: clamped };
     }),
 
-  setLanggraph: (snap: LangSmithSnapshot) =>
-    setState((s) => ({ ...s, langgraph: snap })),
+  setLanggraph: (snap: LangSmithSnapshot) => setState((s) => ({ ...s, langgraph: snap })),
 
-  setSharedNotes: (notes: string[]) =>
-    setState((s) => ({ ...s, sharedNotes: notes })),
+  setSharedNotes: (notes: string[]) => setState((s) => ({ ...s, sharedNotes: notes })),
 
   addSharedNote: (note: string) =>
     setState((s) => ({ ...s, sharedNotes: [...s.sharedNotes, note].slice(-50) })),
@@ -280,14 +271,11 @@ export const store = {
       sharedNotes: s.sharedNotes.filter((_, i) => i !== idx),
     })),
 
-  clearSharedNotes: () =>
-    setState((s) => ({ ...s, sharedNotes: [] })),
+  clearSharedNotes: () => setState((s) => ({ ...s, sharedNotes: [] })),
 
-  setAwareness: (mode: 'none' | 'roster') =>
-    setState((s) => ({ ...s, awareness: mode })),
+  setAwareness: (mode: 'none' | 'roster') => setState((s) => ({ ...s, awareness: mode })),
 
-  setAutoNotes: (on: boolean) =>
-    setState((s) => ({ ...s, autoNotes: on })),
+  setAutoNotes: (on: boolean) => setState((s) => ({ ...s, autoNotes: on })),
 
   queueClarifications: (slot: Slot, questions: string[]) =>
     updatePane(slot, (p) => ({
@@ -301,8 +289,7 @@ export const store = {
   enterClarifyMode: (slot: Slot) =>
     setState((s) => ({ ...s, clarifyingFor: slot, targetSlots: [slot] })),
 
-  exitClarifyMode: () =>
-    setState((s) => ({ ...s, clarifyingFor: null })),
+  exitClarifyMode: () => setState((s) => ({ ...s, clarifyingFor: null })),
 
   popClarification: (slot: Slot) =>
     updatePane(slot, (p) => ({
@@ -317,14 +304,12 @@ export const store = {
       return { ...s, selectedArtifactIdx: next };
     }),
 
-  setArtifactFilter: (text: string) =>
-    setState((s) => ({ ...s, artifactFilter: text })),
+  setArtifactFilter: (text: string) => setState((s) => ({ ...s, artifactFilter: text })),
 
   setArtifactFilterMode: (on: boolean) =>
     setState((s) => ({ ...s, artifactFilterMode: on, artifactFilter: on ? s.artifactFilter : '' })),
 
-  setHelpVisible: (on: boolean) =>
-    setState((s) => ({ ...s, helpVisible: on })),
+  setHelpVisible: (on: boolean) => setState((s) => ({ ...s, helpVisible: on })),
 
   setPaletteVisible: (on: boolean) =>
     setState((s) => ({
@@ -374,11 +359,9 @@ export const store = {
       return { ...s, trust: { ...s.trust, [slot]: next } };
     }),
 
-  setFocusMode: (on: boolean) =>
-    setState((s) => ({ ...s, focusMode: on })),
+  setFocusMode: (on: boolean) => setState((s) => ({ ...s, focusMode: on })),
 
-  setCompactMode: (on: boolean) =>
-    setState((s) => ({ ...s, compactMode: on })),
+  setCompactMode: (on: boolean) => setState((s) => ({ ...s, compactMode: on })),
 
   togglePinArtifact: (id: string) =>
     setState((s) => {
@@ -391,14 +374,11 @@ export const store = {
       };
     }),
 
-  setGlobalBudget: (usd: number | null) =>
-    setState((s) => ({ ...s, globalBudgetUsd: usd })),
+  setGlobalBudget: (usd: number | null) => setState((s) => ({ ...s, globalBudgetUsd: usd })),
 
-  bumpRetries: (slot: Slot) =>
-    updatePane(slot, (p) => ({ ...p, retries: (p.retries ?? 0) + 1 })),
+  bumpRetries: (slot: Slot) => updatePane(slot, (p) => ({ ...p, retries: (p.retries ?? 0) + 1 })),
 
-  resetRetries: (slot: Slot) =>
-    updatePane(slot, (p) => ({ ...p, retries: 0 })),
+  resetRetries: (slot: Slot) => updatePane(slot, (p) => ({ ...p, retries: 0 })),
 
   appendTurn: (slot: Slot, turn: Turn) =>
     updatePane(slot, (p) => ({ ...p, turns: [...p.turns, turn] })),
@@ -422,9 +402,8 @@ export const store = {
   historyPrev: (slot: Slot, currentDraft: string) =>
     updatePane(slot, (p) => {
       if (p.history.length === 0) return p;
-      const cursor = p.historyCursor === null
-        ? p.history.length - 1
-        : Math.max(0, p.historyCursor - 1);
+      const cursor =
+        p.historyCursor === null ? p.history.length - 1 : Math.max(0, p.historyCursor - 1);
       const draftSave = p.historyCursor === null ? currentDraft : p.draftBeforeScroll;
       setState((s) => ({ ...s, promptDraft: p.history[cursor]! }));
       return { ...p, historyCursor: cursor, draftBeforeScroll: draftSave };
@@ -467,9 +446,7 @@ export const store = {
         const pane = s.panes.find((p) => p.slot === slot);
         const sample: PaneStatus = pane ? pane.status : 'OFFLINE';
         const prev = s.history[slot];
-        next[slot] = prev.length >= HISTORY_LIMIT
-          ? [...prev.slice(1), sample]
-          : [...prev, sample];
+        next[slot] = prev.length >= HISTORY_LIMIT ? [...prev.slice(1), sample] : [...prev, sample];
       }
       return { ...s, history: next };
     }),
@@ -506,16 +483,13 @@ export const store = {
           responseSoFar: addText ? p.responseSoFar + addText : p.responseSoFar,
         };
       });
-      const allDone = progress.every(
-        (p) => p.status === 'DONE' || p.status === 'FAULT',
-      );
+      const allDone = progress.every((p) => p.status === 'DONE' || p.status === 'FAULT');
       return {
         ...s,
         broadcast: {
           ...s.broadcast,
           progress,
-          dismissAt:
-            allDone && !s.broadcast.dismissAt ? Date.now() + 5000 : s.broadcast.dismissAt,
+          dismissAt: allDone && !s.broadcast.dismissAt ? Date.now() + 5000 : s.broadcast.dismissAt,
         },
       };
     }),
@@ -527,9 +501,7 @@ export const store = {
         ...s,
         broadcast: {
           ...s.broadcast,
-          progress: s.broadcast.progress.map((p) =>
-            p.slot === slot ? { ...p, vote } : p,
-          ),
+          progress: s.broadcast.progress.map((p) => (p.slot === slot ? { ...p, vote } : p)),
         },
       };
     }),

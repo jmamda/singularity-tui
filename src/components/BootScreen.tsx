@@ -16,9 +16,7 @@ export function BootScreen({ startedAt, cols, rows }: Props) {
     return () => clearInterval(t);
   }, []);
   const elapsed = now - startedAt;
-  const lines = Array.from({ length: BOOT_LINE_COUNT }, (_, i) =>
-    bootLineAt(elapsed, i),
-  );
+  const lines = Array.from({ length: BOOT_LINE_COUNT }, (_, i) => bootLineAt(elapsed, i));
   const stillTyping = elapsed < BOOT_TOTAL_MS - 400;
   const finalFlashOn = elapsed > BOOT_TOTAL_MS - 400 && Math.floor(elapsed / 100) % 2 === 0;
 

@@ -32,7 +32,7 @@ export const GRAMMAR: GrammarEntry[] = [
   {
     op: '>N text',
     name: 'relay',
-    description: 'pipe current target\'s last response as context into pane N',
+    description: "pipe current target's last response as context into pane N",
     example: '>2 now write the tests for what you saw',
   },
   {
@@ -56,32 +56,32 @@ export const GRAMMAR: GrammarEntry[] = [
 ];
 
 const SLASH = [
-  ['/help',     'open the keys & grammar overlay'],
+  ['/help', 'open the keys & grammar overlay'],
   ['/commands', 'list all slash commands (text)'],
-  ['/clear',    'clear target pane(s) (or `all`)'],
-  ['/save',     'save target pane output to file'],
-  ['/apply',    'write selected artifact to a file'],
-  ['/diff',     'unified diff of two artifacts (#a #b) or panes'],
+  ['/clear', 'clear target pane(s) (or `all`)'],
+  ['/save', 'save target pane output to file'],
+  ['/apply', 'write selected artifact to a file'],
+  ['/diff', 'unified diff of two artifacts (#a #b) or panes'],
   ['/lock <N>', 'toggle dispatch lock on pane N'],
-  ['/search',   'highlight regex matches across panes'],
-  ['/profile',  'queue a profile switch for next restart'],
-  ['/snippet',  'expand · save · list saved prompt snippets'],
-  ['/cost',     'show running session cost'],
-  ['/budget',   'set or clear session $ budget'],
-  ['/note',     'manage shared scratchpad (add · list · clear · rm · auto)'],
-  ['/awareness','toggle roster awareness (roster | none)'],
-  ['/focus',    'targeted row expands; other shrinks'],
-  ['/compact',  'hide ECG + footer to reclaim rows'],
+  ['/search', 'highlight regex matches across panes'],
+  ['/profile', 'queue a profile switch for next restart'],
+  ['/snippet', 'expand · save · list saved prompt snippets'],
+  ['/cost', 'show running session cost'],
+  ['/budget', 'set or clear session $ budget'],
+  ['/note', 'manage shared scratchpad (add · list · clear · rm · auto)'],
+  ['/awareness', 'toggle roster awareness (roster | none)'],
+  ['/focus', 'targeted row expands; other shrinks'],
+  ['/compact', 'hide ECG + footer to reclaim rows'],
 ];
 
 const KEYS = [
-  ['1-4',     'toggle target inclusion'],
-  ['Tab',     'cycle single target'],
-  ['↑ / ↓',   'walk prompt history (or artifact list if slot 4 selected)'],
-  ['j / k',   'navigate artifacts (when slot 4 is the target)'],
-  ['s / c',   'save / copy current artifact'],
-  ['Esc',     'clear target + draft'],
-  ['Ctrl+C',  'quit (closes child processes cleanly)'],
+  ['1-4', 'toggle target inclusion'],
+  ['Tab', 'cycle single target'],
+  ['↑ / ↓', 'walk prompt history (or artifact list if slot 4 selected)'],
+  ['j / k', 'navigate artifacts (when slot 4 is the target)'],
+  ['s / c', 'save / copy current artifact'],
+  ['Esc', 'clear target + draft'],
+  ['Ctrl+C', 'quit (closes child processes cleanly)'],
 ];
 
 export interface AnsiPalette {
@@ -117,10 +117,14 @@ export function renderGrammar(c: AnsiPalette = ANSI): string {
   lines.push(c.red('  ║   S I N G U L A R I T Y   //   DISPATCH GRAMMAR               ║'));
   lines.push(c.red('  ╚═══════════════════════════════════════════════════════════════╝'));
   lines.push('');
-  lines.push(c.bold('  Operators') + c.dim('   (first character determines multi-agent semantics)'));
+  lines.push(
+    c.bold('  Operators') + c.dim('   (first character determines multi-agent semantics)'),
+  );
   lines.push(c.dim('  ─────────────────────────────────────────────────────────────'));
   for (const g of GRAMMAR) {
-    lines.push(`  ${c.green(g.op.padEnd(11))} ${c.bold(g.name.padEnd(14))} ${c.dim(g.description)}`);
+    lines.push(
+      `  ${c.green(g.op.padEnd(11))} ${c.bold(g.name.padEnd(14))} ${c.dim(g.description)}`,
+    );
     lines.push(`              ${c.dim('e.g.')}  ${c.amber(g.example)}`);
   }
   lines.push('');

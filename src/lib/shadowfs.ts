@@ -152,7 +152,9 @@ export async function shadowWrite(
  * reverse, restoring `previous` for each entry, and deletes files that didn't
  * exist before.
  */
-export async function rollbackTo(snapshotId: string): Promise<{ restored: number; deleted: number; errors: string[] }> {
+export async function rollbackTo(
+  snapshotId: string,
+): Promise<{ restored: number; deleted: number; errors: string[] }> {
   const idx = snapshots.findIndex((s) => s.id === snapshotId);
   if (idx < 0) throw new Error(`unknown snapshot: ${snapshotId}`);
   const after = snapshots.slice(idx + 1).map((s) => s.id);

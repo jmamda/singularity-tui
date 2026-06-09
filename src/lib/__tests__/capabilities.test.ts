@@ -52,10 +52,11 @@ describe('checkCapabilities', () => {
     expect(r.ok).toBe(false);
   });
   it('exec pattern matches as regex', () => {
-    const r = checkCapabilities(
-      [cap({ kind: 'exec', pattern: '^npm test( |$)' })],
-      { slot: 1, kind: 'exec', target: 'npm test' },
-    );
+    const r = checkCapabilities([cap({ kind: 'exec', pattern: '^npm test( |$)' })], {
+      slot: 1,
+      kind: 'exec',
+      target: 'npm test',
+    });
     expect(r.ok).toBe(true);
   });
 });

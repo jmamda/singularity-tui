@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process';
 
-const CODE_HINT = /\b(fix|refactor|bug|test|review|implement|add|remove|rename|file|function|class|module|import|export|diff|commit|branch)\b/i;
+const CODE_HINT =
+  /\b(fix|refactor|bug|test|review|implement|add|remove|rename|file|function|class|module|import|export|diff|commit|branch)\b/i;
 
 function run(cmd: string, args: string[]): Promise<{ ok: boolean; out: string }> {
   return new Promise((resolve) => {

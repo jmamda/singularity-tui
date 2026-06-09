@@ -65,7 +65,12 @@ async function checkClaude(): Promise<Check> {
   }
   // We don't programmatically verify Claude auth — if they have the binary,
   // they've almost certainly already logged in (this whole project depends on it).
-  return { id: 'claude', label: 'CLAUDE', status: 'OK', detail: 'binary present (auth via `claude` itself)' };
+  return {
+    id: 'claude',
+    label: 'CLAUDE',
+    status: 'OK',
+    detail: 'binary present (auth via `claude` itself)',
+  };
 }
 
 async function checkCodex(): Promise<Check> {
@@ -160,11 +165,15 @@ async function checkLangSmith(rl: readline.Interface): Promise<Check> {
     action: {
       label: 'set LANGSMITH_API_KEY (saved to ~/.singularity/.env)',
       run: async () => {
-        const key = (await rl.question(c.dim('  paste LANGSMITH_API_KEY (or empty to skip): '))).trim();
+        const key = (
+          await rl.question(c.dim('  paste LANGSMITH_API_KEY (or empty to skip): '))
+        ).trim();
         if (!key) return;
         await upsertEnvFile('LANGSMITH_API_KEY', key);
         process.env.LANGSMITH_API_KEY = key;
-        const proj = (await rl.question(c.dim('  optional LANGSMITH_PROJECT_ID (empty to skip): '))).trim();
+        const proj = (
+          await rl.question(c.dim('  optional LANGSMITH_PROJECT_ID (empty to skip): '))
+        ).trim();
         if (proj) {
           await upsertEnvFile('LANGSMITH_PROJECT_ID', proj);
           process.env.LANGSMITH_PROJECT_ID = proj;
@@ -195,7 +204,9 @@ async function checkAntigravity(rl: readline.Interface): Promise<Check> {
         const cmd = (await rl.question(c.dim('  binary name (empty to skip): '))).trim();
         if (!cmd) return;
         const args = (
-          await rl.question(c.dim('  args JSON, use __PROMPT__ placeholder (default: ["exec","__PROMPT__"]): '))
+          await rl.question(
+            c.dim('  args JSON, use __PROMPT__ placeholder (default: ["exec","__PROMPT__"]): '),
+          )
         ).trim();
         await upsertEnvFile('SINGULARITY_ANTIGRAVITY_CMD', cmd);
         process.env.SINGULARITY_ANTIGRAVITY_CMD = cmd;
@@ -312,16 +323,28 @@ export async function runWizard(): Promise<number> {
       if (actionable.length === 0) break;
 
       const answer = (
-        await rl.question(c.bold('  > pick action [1-' + actionable.length + ', `a` all, `s` skip rest, Enter to refresh]: '))
-      ).trim().toLowerCase();
+        await rl.question(
+          c.bold(
+            '  > pick action [1-' +
+              actionable.length +
+              ', `a` all, `s` skip rest, Enter to refresh]: ',
+          ),
+        )
+      )
+        .trim()
+        .toLowerCase();
 
       if (answer === 's' || answer === 'skip') break;
 
-      const indices = answer === 'a' || answer === 'all'
-        ? actionable.map((_, i) => i)
-        : answer
-          ? answer.split(/[,\s]+/).map((x) => Number(x) - 1).filter((i) => Number.isInteger(i) && i >= 0 && i < actionable.length)
-          : []; // empty → just refresh status
+      const indices =
+        answer === 'a' || answer === 'all'
+          ? actionable.map((_, i) => i)
+          : answer
+            ? answer
+                .split(/[,\s]+/)
+                .map((x) => Number(x) - 1)
+                .filter((i) => Number.isInteger(i) && i >= 0 && i < actionable.length)
+            : []; // empty → just refresh status
 
       for (const i of indices) {
         const ch = actionable[i]!;
@@ -353,9 +376,11 @@ export async function runWizard(): Promise<number> {
 export async function confirmFirstRun(): Promise<boolean> {
   const rl = readline.createInterface({ input, output });
   try {
-    const answer = (await rl.question(
-      '\n' + c.amber('  ◐ first-run detected. Run setup wizard? [Y/n]: '),
-    )).trim().toLowerCase();
+    const answer = (
+      await rl.question('\n' + c.amber('  ◐ first-run detected. Run setup wizard? [Y/n]: '))
+    )
+      .trim()
+      .toLowerCase();
     return answer !== 'n' && answer !== 'no';
   } finally {
     rl.close();

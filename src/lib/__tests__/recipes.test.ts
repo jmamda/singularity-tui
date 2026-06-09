@@ -54,11 +54,7 @@ describe('runRecipe', () => {
       {
         name: 't',
         description: '',
-        steps: [
-          { do: 'one', target: 1 },
-          { do: 'two', target: 2 },
-          { do: '/share file.md' },
-        ],
+        steps: [{ do: 'one', target: 1 }, { do: 'two', target: 2 }, { do: '/share file.md' }],
       },
       d,
     );
@@ -70,11 +66,9 @@ describe('runRecipe', () => {
 
   it('substitutes template vars', async () => {
     const d = mockDispatcher();
-    await runRecipe(
-      { name: 't', description: '', steps: [{ do: 'hi {{who}}', target: 1 }] },
-      d,
-      { who: 'world' },
-    );
+    await runRecipe({ name: 't', description: '', steps: [{ do: 'hi {{who}}', target: 1 }] }, d, {
+      who: 'world',
+    });
     expect(d.calls[0]).toBe('hi world|1');
   });
 
@@ -88,7 +82,14 @@ describe('runRecipe', () => {
       },
     };
     const r = await runRecipe(
-      { name: 't', description: '', steps: [{ do: 'a', target: 1 }, { do: 'b', target: 1 }] },
+      {
+        name: 't',
+        description: '',
+        steps: [
+          { do: 'a', target: 1 },
+          { do: 'b', target: 1 },
+        ],
+      },
       d,
     );
     expect(r.ok).toBe(false);

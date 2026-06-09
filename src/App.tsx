@@ -124,7 +124,8 @@ async function initialize(profileName: string) {
   // Plugins from ~/.singularity/plugins/
   const { loadLocalPlugins } = await import('./lib/plugins.js');
   const loaded = await loadLocalPlugins();
-  if (loaded.length > 0) store.notify('info', `loaded ${loaded.length} plugin(s): ${loaded.join(', ')}`);
+  if (loaded.length > 0)
+    store.notify('info', `loaded ${loaded.length} plugin(s): ${loaded.join(', ')}`);
 
   // Persistent shadow journal + trust survive crashes / restarts.
   await enablePersistence();
@@ -222,11 +223,7 @@ interface StreamOpts {
   originalPrompt: string | null;
 }
 
-async function runStream(
-  slot: Slot,
-  stream: AsyncIterable<AdapterEvent>,
-  opts: StreamOpts,
-) {
+async function runStream(slot: Slot, stream: AsyncIterable<AdapterEvent>, opts: StreamOpts) {
   const startedAt = Date.now();
   store.setMetrics(slot, { lastDispatchAt: startedAt, durationMs: undefined });
   let assistantText = '';
@@ -320,7 +317,10 @@ async function runStream(
       if (fresh.length > 0) {
         for (const n of fresh) store.addSharedNote(n);
         void saveNotes(store.getState().sharedNotes);
-        store.notify('info', `auto-noted ${fresh.length} from [${slot}]: ${fresh[0]!.slice(0, 48)}${fresh.length > 1 ? ' …' : ''}`);
+        store.notify(
+          'info',
+          `auto-noted ${fresh.length} from [${slot}]: ${fresh[0]!.slice(0, 48)}${fresh.length > 1 ? ' …' : ''}`,
+        );
       }
     }
 
@@ -355,7 +355,10 @@ async function runStream(
       // Enter clarify mode only if not already clarifying another pane.
       if (store.getState().clarifyingFor === null) {
         store.enterClarifyMode(slot);
-        store.notify('warn', `[${slot}] asked ${questions.length} clarification${questions.length === 1 ? '' : 's'}`);
+        store.notify(
+          'warn',
+          `[${slot}] asked ${questions.length} clarification${questions.length === 1 ? '' : 's'}`,
+        );
       }
     }
   }
@@ -377,7 +380,10 @@ async function runStream(
     if (pane && pane.retries < pane.maxRetries) {
       store.bumpRetries(slot);
       const backoff = 1000 * Math.pow(2, pane.retries);
-      store.notify('warn', `[${slot}] retry ${pane.retries + 1}/${pane.maxRetries} in ${backoff / 1000}s`);
+      store.notify(
+        'warn',
+        `[${slot}] retry ${pane.retries + 1}/${pane.maxRetries} in ${backoff / 1000}s`,
+      );
       setTimeout(() => dispatchOne(slot, opts.originalPrompt!, opts.broadcastTrack), backoff);
     }
   }
@@ -387,12 +393,23 @@ function checkBudget(slot: Slot): { ok: boolean; reason?: string } {
   const s = store.getState();
   if (s.globalBudgetUsd !== null && s.totalCostUsd >= s.globalBudgetUsd) {
     fireAndForget({ event: 'budget_exceeded', usd: s.totalCostUsd, cap: s.globalBudgetUsd });
-    return { ok: false, reason: `global budget reached ($${s.totalCostUsd.toFixed(4)} / $${s.globalBudgetUsd.toFixed(2)})` };
+    return {
+      ok: false,
+      reason: `global budget reached ($${s.totalCostUsd.toFixed(4)} / $${s.globalBudgetUsd.toFixed(2)})`,
+    };
   }
   const pane = s.panes.find((p) => p.slot === slot);
   if (pane && pane.budgetUsd && (pane.metrics.costUsd ?? 0) >= pane.budgetUsd) {
-    fireAndForget({ event: 'budget_exceeded', slot, usd: pane.metrics.costUsd ?? 0, cap: pane.budgetUsd });
-    return { ok: false, reason: `[${slot}] pane budget reached ($${(pane.metrics.costUsd ?? 0).toFixed(4)} / $${pane.budgetUsd.toFixed(2)})` };
+    fireAndForget({
+      event: 'budget_exceeded',
+      slot,
+      usd: pane.metrics.costUsd ?? 0,
+      cap: pane.budgetUsd,
+    });
+    return {
+      ok: false,
+      reason: `[${slot}] pane budget reached ($${(pane.metrics.costUsd ?? 0).toFixed(4)} / $${pane.budgetUsd.toFixed(2)})`,
+    };
   }
   return { ok: true };
 }
@@ -520,10 +537,7 @@ function dispatchBroadcast(prompt: string, quorum = false) {
     .getState()
     .panes.filter(
       (p) =>
-        p.status !== 'OFFLINE' &&
-        p.adapter.kind === 'cli' &&
-        p.kind !== 'artifact' &&
-        !p.locked,
+        p.status !== 'OFFLINE' && p.adapter.kind === 'cli' && p.kind !== 'artifact' && !p.locked,
     )
     .map((p) => p.slot);
   if (eligible.length === 0) {
@@ -849,12 +863,17 @@ export function App({ profile = 'default' }: Props) {
         const a = store.getState().artifacts[store.getState().selectedArtifactIdx];
         if (!a) return;
         const ext =
-          a.lang === 'typescript' ? 'ts'
-          : a.lang === 'javascript' ? 'js'
-          : a.lang === 'python' ? 'py'
-          : a.lang === 'json' ? 'json'
-          : a.lang === 'markdown' ? 'md'
-          : a.lang || 'txt';
+          a.lang === 'typescript'
+            ? 'ts'
+            : a.lang === 'javascript'
+              ? 'js'
+              : a.lang === 'python'
+                ? 'py'
+                : a.lang === 'json'
+                  ? 'json'
+                  : a.lang === 'markdown'
+                    ? 'md'
+                    : a.lang || 'txt';
         const path = `artifact-${Date.now()}.${ext}`;
         void (async () => {
           // Same pipeline as /apply and /save: capability → sentinel → shadow journal.
@@ -865,7 +884,10 @@ export function App({ profile = 'default' }: Props) {
             target: path,
           });
           if (!cap.ok) {
-            store.notify('error', `cannot save: ${cap.reason} — /grant ${a.sourceSlot} write:${path}`);
+            store.notify(
+              'error',
+              `cannot save: ${cap.reason} — /grant ${a.sourceSlot} write:${path}`,
+            );
             return;
           }
           const { sentinelVerdict, TRUST_DELTAS } = await import('./lib/sentinel.js');
@@ -897,7 +919,10 @@ export function App({ profile = 'default' }: Props) {
             const p = spawn('pbcopy');
             p.stdin.write(a.content);
             p.stdin.end();
-            store.notify('info', `copied artifact #${store.getState().selectedArtifactIdx + 1} to clipboard`);
+            store.notify(
+              'info',
+              `copied artifact #${store.getState().selectedArtifactIdx + 1} to clipboard`,
+            );
           });
         }
         return;
@@ -932,7 +957,10 @@ export function App({ profile = 'default' }: Props) {
       return;
     }
 
-    if (draft === '' && (input === '!' || input === '/' || input === '?' || input === '>' || input === '@')) {
+    if (
+      draft === '' &&
+      (input === '!' || input === '/' || input === '?' || input === '>' || input === '@')
+    ) {
       store.setPromptDraft(input);
       return;
     }
@@ -1002,7 +1030,8 @@ export function App({ profile = 'default' }: Props) {
       const artifactSend = text.match(/^>>\s*(\d)\s*(.*)$/s);
       if (artifactSend) {
         const toSlot = Number(artifactSend[1]) as Slot;
-        const action = (artifactSend[2] || '').trim() || 'Review or extend this code. Critique concretely.';
+        const action =
+          (artifactSend[2] || '').trim() || 'Review or extend this code. Critique concretely.';
         const s2 = store.getState();
         const a = s2.artifacts[s2.selectedArtifactIdx];
         if (!a) {
@@ -1069,8 +1098,16 @@ export function App({ profile = 'default' }: Props) {
   const MIN_ROWS = 20;
   if (cols < MIN_COLS || rows < MIN_ROWS) {
     return (
-      <Box width={cols} height={rows} alignItems="center" justifyContent="center" flexDirection="column">
-        <Text color={color.amber} bold>⚠ terminal too small</Text>
+      <Box
+        width={cols}
+        height={rows}
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+      >
+        <Text color={color.amber} bold>
+          ⚠ terminal too small
+        </Text>
         <Text color={color.inactive}>
           {cols}×{rows} — need at least {MIN_COLS}×{MIN_ROWS}
         </Text>
@@ -1118,12 +1155,7 @@ export function App({ profile = 'default' }: Props) {
             const targeted = targetSlots.includes(slot as Slot);
             if (pane.kind === 'artifact') {
               return (
-                <ArtifactPane
-                  key={slot}
-                  targeted={targeted}
-                  width={paneWidth}
-                  height={topHeight}
-                />
+                <ArtifactPane key={slot} targeted={targeted} width={paneWidth} height={topHeight} />
               );
             }
             return (
@@ -1149,12 +1181,7 @@ export function App({ profile = 'default' }: Props) {
             const targeted = targetSlots.includes(slot as Slot);
             if (pane.kind === 'artifact') {
               return (
-                <ArtifactPane
-                  key={slot}
-                  targeted={targeted}
-                  width={paneWidth}
-                  height={botHeight}
-                />
+                <ArtifactPane key={slot} targeted={targeted} width={paneWidth} height={botHeight} />
               );
             }
             return (

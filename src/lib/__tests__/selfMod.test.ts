@@ -80,7 +80,9 @@ describe('singularity_grant_capability (MCP)', () => {
       seconds: 31_536_000,
     });
     expect(JSON.stringify(result)).toMatch(/granted write:src/);
-    const granted = store.getState().capabilities.find((c) => c.kind === 'write' && c.pattern === 'src/**');
+    const granted = store
+      .getState()
+      .capabilities.find((c) => c.kind === 'write' && c.pattern === 'src/**');
     expect(granted).toBeDefined();
     const ttl = granted!.expiresAt - Date.now();
     expect(ttl).toBeLessThanOrEqual(3600 * 1000 + 1000);

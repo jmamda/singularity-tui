@@ -58,7 +58,9 @@ export async function runHeadless(opts: HeadlessOpts): Promise<number> {
   }
 
   if (!opts.json) {
-    process.stderr.write(`\n[done · in=${tokensIn} out=${tokensOut} cost=$${costUsd.toFixed(4)}]\n`);
+    process.stderr.write(
+      `\n[done · in=${tokensIn} out=${tokensOut} cost=$${costUsd.toFixed(4)}]\n`,
+    );
   }
   return exitCode;
 }

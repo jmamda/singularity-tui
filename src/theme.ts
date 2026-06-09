@@ -51,17 +51,41 @@ export const color: Palette = currentTheme();
 // thanks to JS getter semantics. We use plain refs so an existing reference
 // stays up to date when the theme changes.
 export const status = {
-  get IDLE()      { return { label: 'IDLE',      color: color.accent   }; },
-  get STANDBY()   { return { label: 'STANDBY',   color: color.accent   }; },
-  get ENGAGED()   { return { label: 'ENGAGED',   color: color.primary  }; },
-  get STREAMING() { return { label: 'STREAMING', color: color.primary  }; },
-  get MONITOR()   { return { label: 'MONITOR',   color: color.amber    }; },
-  get FAULT()     { return { label: 'FAULT',     color: color.amber    }; },
-  get OFFLINE()   { return { label: 'OFFLINE',   color: color.inactive }; },
-  get DONE()      { return { label: 'DONE',      color: color.white    }; },
+  get IDLE() {
+    return { label: 'IDLE', color: color.accent };
+  },
+  get STANDBY() {
+    return { label: 'STANDBY', color: color.accent };
+  },
+  get ENGAGED() {
+    return { label: 'ENGAGED', color: color.primary };
+  },
+  get STREAMING() {
+    return { label: 'STREAMING', color: color.primary };
+  },
+  get MONITOR() {
+    return { label: 'MONITOR', color: color.amber };
+  },
+  get FAULT() {
+    return { label: 'FAULT', color: color.amber };
+  },
+  get OFFLINE() {
+    return { label: 'OFFLINE', color: color.inactive };
+  },
+  get DONE() {
+    return { label: 'DONE', color: color.white };
+  },
 };
 
-export type PaneStatus = 'IDLE' | 'STANDBY' | 'ENGAGED' | 'STREAMING' | 'MONITOR' | 'FAULT' | 'OFFLINE' | 'DONE';
+export type PaneStatus =
+  | 'IDLE'
+  | 'STANDBY'
+  | 'ENGAGED'
+  | 'STREAMING'
+  | 'MONITOR'
+  | 'FAULT'
+  | 'OFFLINE'
+  | 'DONE';
 
 export const glyph = {
   active: '◢',

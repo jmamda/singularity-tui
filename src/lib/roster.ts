@@ -42,9 +42,7 @@ export function rosterPreamble(
     );
   }
 
-  lines.push(
-    'You do not see other panes\' work unless I explicitly relay or share it.',
-  );
+  lines.push("You do not see other panes' work unless I explicitly relay or share it.");
   lines.push('');
   lines.push('Conventions (use these on their own lines, exactly as shown):');
   lines.push(`  - ${CONFIDENCE_HINT_FOR_MODEL}`);

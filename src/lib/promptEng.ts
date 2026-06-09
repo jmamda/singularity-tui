@@ -74,7 +74,9 @@ Never merely summarize the relay back. The user already has it.
 
 // ─── Planner instruction (the user-facing dispatch text for @plan) ──────
 
-export function plannerInstruction(panes: Array<{ slot: number; label: string; persona?: string }>): string {
+export function plannerInstruction(
+  panes: Array<{ slot: number; label: string; persona?: string }>,
+): string {
   const workerList = panes
     .filter((p) => p.label !== 'ARTIFACTS')
     .map((p) => {

@@ -32,19 +32,20 @@ export function RaceBars({ width }: Props) {
     : null;
 
   return (
-    <Box
-      flexDirection="column"
-      borderStyle="round"
-      borderColor={color.primary}
-      paddingX={1}
-    >
+    <Box flexDirection="column" borderStyle="round" borderColor={color.primary} paddingX={1}>
       <Box justifyContent="space-between">
         <Text color={color.primary} bold>
           ▶ {isQuorum ? 'QUORUM' : 'BROADCAST'} · "{broadcast.prompt.slice(0, 50)}"
         </Text>
         {t ? (
-          <Text color={t.verdict === 'YES' ? color.accent : t.verdict === 'NO' ? color.amber : color.inactive} bold>
-            verdict: {t.verdict} ({t.yes}Y · {t.no}N · {t.abstain}—) w({t.yesWeighted.toFixed(1)}/{t.noWeighted.toFixed(1)})
+          <Text
+            color={
+              t.verdict === 'YES' ? color.accent : t.verdict === 'NO' ? color.amber : color.inactive
+            }
+            bold
+          >
+            verdict: {t.verdict} ({t.yes}Y · {t.no}N · {t.abstain}—) w({t.yesWeighted.toFixed(1)}/
+            {t.noWeighted.toFixed(1)})
           </Text>
         ) : null}
       </Box>
@@ -55,14 +56,9 @@ export function RaceBars({ width }: Props) {
         const { fill, empty } = bar(frac, barW);
         const elapsed = (p.endedAt ?? Date.now()) - p.startedAt;
         const tps = elapsed > 0 ? Math.round((p.tokens / elapsed) * 1000) : 0;
-        const cap =
-          p.status === 'DONE' ? '✓' : p.status === 'FAULT' ? '✗' : ' ';
+        const cap = p.status === 'DONE' ? '✓' : p.status === 'FAULT' ? '✗' : ' ';
         const c =
-          p.status === 'DONE'
-            ? color.accent
-            : p.status === 'FAULT'
-              ? color.amber
-              : color.primary;
+          p.status === 'DONE' ? color.accent : p.status === 'FAULT' ? color.amber : color.primary;
         const voteChip = isQuorum
           ? p.vote === 'YES'
             ? ` ${color.accent === '#00ff66' ? 'YES' : 'YES'}`

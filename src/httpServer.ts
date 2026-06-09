@@ -214,15 +214,21 @@ export async function runHttpServer(port = 7777): Promise<void> {
   const server = createServer((req, res) =>
     handle(req, res).catch((e) => {
       // Log full error server-side; return a generic message on the wire.
-      process.stderr.write(`[http] handler error: ${e instanceof Error ? e.stack ?? e.message : String(e)}\n`);
+      process.stderr.write(
+        `[http] handler error: ${e instanceof Error ? (e.stack ?? e.message) : String(e)}\n`,
+      );
       json(res, 500, { error: 'internal error' });
     }),
   );
   await new Promise<void>((resolve) => server.listen(port, resolve));
   process.stdout.write(`● singularity http on :${port}\n`);
-  process.stdout.write(`  GET  /openapi.json\n  GET  /grammar\n  GET  /panes\n  POST /dispatch (SSE)\n`);
+  process.stdout.write(
+    `  GET  /openapi.json\n  GET  /grammar\n  GET  /panes\n  POST /dispatch (SSE)\n`,
+  );
   if (process.env.SINGULARITY_SERVER_PASSWORD) {
-    process.stdout.write(`  Auth: Bearer ${'*'.repeat(8)} required (SINGULARITY_SERVER_PASSWORD set)\n`);
+    process.stdout.write(
+      `  Auth: Bearer ${'*'.repeat(8)} required (SINGULARITY_SERVER_PASSWORD set)\n`,
+    );
   } else {
     process.stdout.write(`  Auth: none (set SINGULARITY_SERVER_PASSWORD to require Bearer)\n`);
   }

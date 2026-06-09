@@ -99,10 +99,7 @@ export class CodeBlockExtractor {
 // Per-pane extractor registry — module-scope so it persists across renders.
 const extractors = new Map<Slot, CodeBlockExtractor>();
 
-export function feedPaneStream(
-  slot: Slot,
-  chunk: string,
-): { lang: string; content: string }[] {
+export function feedPaneStream(slot: Slot, chunk: string): { lang: string; content: string }[] {
   let ex = extractors.get(slot);
   if (!ex) {
     ex = new CodeBlockExtractor();
@@ -122,12 +119,24 @@ export function partialFor(slot: Slot): PartialBlock | null {
 
 const TITLE_PATTERNS: Array<{ re: RegExp; pick: (m: RegExpMatchArray) => string }> = [
   // python: `def foo(...)` / `class Foo`
-  { re: /^\s*def\s+([A-Za-z_][\w]*)\s*\(([^)]*)\)/m, pick: (m) => `def ${m[1]}(${m[2]!.slice(0, 24)})` },
-  { re: /^\s*class\s+([A-Za-z_][\w]*)/m,             pick: (m) => `class ${m[1]}` },
+  {
+    re: /^\s*def\s+([A-Za-z_][\w]*)\s*\(([^)]*)\)/m,
+    pick: (m) => `def ${m[1]}(${m[2]!.slice(0, 24)})`,
+  },
+  { re: /^\s*class\s+([A-Za-z_][\w]*)/m, pick: (m) => `class ${m[1]}` },
   // ts/js: `function foo`, `export function foo`, `const foo = (`
-  { re: /^\s*(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)/m, pick: (m) => `function ${m[1]}(${m[2]!.slice(0, 24)})` },
-  { re: /^\s*(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?\(/m, pick: (m) => `const ${m[1]} = (…)` },
-  { re: /^\s*(?:export\s+)?(?:abstract\s+)?(?:class|interface|type|enum)\s+([A-Za-z_$][\w$]*)/m, pick: (m) => m[0]!.replace(/^\s*(?:export\s+)?/, '').slice(0, 48) },
+  {
+    re: /^\s*(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)/m,
+    pick: (m) => `function ${m[1]}(${m[2]!.slice(0, 24)})`,
+  },
+  {
+    re: /^\s*(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?\(/m,
+    pick: (m) => `const ${m[1]} = (…)`,
+  },
+  {
+    re: /^\s*(?:export\s+)?(?:abstract\s+)?(?:class|interface|type|enum)\s+([A-Za-z_$][\w$]*)/m,
+    pick: (m) => m[0]!.replace(/^\s*(?:export\s+)?/, '').slice(0, 48),
+  },
   // go
   { re: /^\s*func\s+(?:\([^)]+\)\s+)?([A-Za-z_][\w]*)\s*\(/m, pick: (m) => `func ${m[1]}` },
   // rust
@@ -137,7 +146,10 @@ const TITLE_PATTERNS: Array<{ re: RegExp; pick: (m: RegExpMatchArray) => string 
   // JSON top-level key
   { re: /^\s*\{\s*"([^"]+)"\s*:/m, pick: (m) => `{ "${m[1]}": … }` },
   // SQL
-  { re: /^\s*(?:CREATE|ALTER|DROP)\s+(?:TABLE|INDEX|VIEW)\s+([A-Za-z_][\w]*)/im, pick: (m) => m[0]!.slice(0, 48) },
+  {
+    re: /^\s*(?:CREATE|ALTER|DROP)\s+(?:TABLE|INDEX|VIEW)\s+([A-Za-z_][\w]*)/im,
+    pick: (m) => m[0]!.slice(0, 48),
+  },
 ];
 
 /** Infer a short title — looks for declarations, file headers, signatures. */
@@ -148,7 +160,10 @@ export function inferTitle(content: string): string {
   }
   // Fallback: first non-empty line, cleaned.
   const firstLine = content.split('\n').find((l) => l.trim()) ?? '';
-  const trimmed = firstLine.trim().replace(/^[/#\s*]+/, '').slice(0, 48);
+  const trimmed = firstLine
+    .trim()
+    .replace(/^[/#\s*]+/, '')
+    .slice(0, 48);
   return trimmed || '(untitled)';
 }
 
@@ -156,8 +171,10 @@ export function inferTitle(content: string): string {
 export function sniffLanguage(content: string, currentLang: string): string {
   if (currentLang && currentLang !== 'text') return currentLang;
   // TS/JS first: ES-modules `from "x"` and arrow-functions are distinctive
-  if (/^\s*import\s+(?:\{[^}]*\}|\w+|\*\s+as\s+\w+).*\s+from\s+["']/m.test(content)) return 'typescript';
-  if (/^\s*(?:export\s+)?(?:function|const|let|interface|type|enum)\s+\w/m.test(content)) return 'typescript';
+  if (/^\s*import\s+(?:\{[^}]*\}|\w+|\*\s+as\s+\w+).*\s+from\s+["']/m.test(content))
+    return 'typescript';
+  if (/^\s*(?:export\s+)?(?:function|const|let|interface|type|enum)\s+\w/m.test(content))
+    return 'typescript';
   // Python: `def`, `class`, `from x import y`, bare `import x` (single token)
   if (/^\s*(?:def\s+\w|class\s+\w|from\s+[\w.]+\s+import\b)/m.test(content)) return 'python';
   if (/^\s*import\s+[\w.]+\s*(?:as\s+\w+)?\s*$/m.test(content)) return 'python';
@@ -165,6 +182,10 @@ export function sniffLanguage(content: string, currentLang: string): string {
   if (/^\s*(?:pub\s+)?fn\s+\w+/m.test(content)) return 'rust';
   if (/^\s*\{[\s\S]*"\w+"\s*:/m.test(content.trim().slice(0, 80))) return 'json';
   if (/^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER)\b/im.test(content)) return 'sql';
-  if (/^\s*#\!\/.*\b(?:bash|sh|zsh)\b/m.test(content) || /^\s*(?:export |echo |cd |if \[)/m.test(content)) return 'bash';
+  if (
+    /^\s*#\!\/.*\b(?:bash|sh|zsh)\b/m.test(content) ||
+    /^\s*(?:export |echo |cd |if \[)/m.test(content)
+  )
+    return 'bash';
   return currentLang || 'text';
 }

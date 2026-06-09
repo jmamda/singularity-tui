@@ -10,7 +10,10 @@ export interface ScoredItem<T> {
   matches: number[];
 }
 
-export function fuzzyScore(query: string, target: string): { score: number; matches: number[] } | null {
+export function fuzzyScore(
+  query: string,
+  target: string,
+): { score: number; matches: number[] } | null {
   if (!query) return { score: 0, matches: [] };
   const q = query.toLowerCase();
   const t = target.toLowerCase();

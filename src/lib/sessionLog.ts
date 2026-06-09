@@ -5,7 +5,14 @@ import { LOG_DIR } from './paths.js';
 import type { Slot } from '../store.js';
 
 export type LogEvent =
-  | { kind: 'dispatch'; at: number; slot: Slot; prompt: string; persona?: string; broadcast?: boolean }
+  | {
+      kind: 'dispatch';
+      at: number;
+      slot: Slot;
+      prompt: string;
+      persona?: string;
+      broadcast?: boolean;
+    }
   | { kind: 'token'; at: number; slot: Slot; text: string }
   | { kind: 'status'; at: number; slot: Slot; status: string }
   | { kind: 'error'; at: number; slot: Slot; message: string }

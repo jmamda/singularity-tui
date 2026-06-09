@@ -47,10 +47,7 @@ export function Pane({
   scrollOffset = 0,
 }: Props) {
   const tick = useTick(
-    targeted ||
-      pane.status === 'ENGAGED' ||
-      pane.status === 'STREAMING' ||
-      pane.status === 'FAULT'
+    targeted || pane.status === 'ENGAGED' || pane.status === 'STREAMING' || pane.status === 'FAULT'
       ? 10
       : 4,
   );
@@ -59,11 +56,9 @@ export function Pane({
   const isFault = pane.status === 'FAULT';
   const isEngaged = pane.status === 'ENGAGED' || pane.status === 'STREAMING';
   const isOffline = pane.status === 'OFFLINE';
-  const isHealthy =
-    pane.status === 'STANDBY' || pane.status === 'IDLE' || pane.status === 'DONE';
+  const isHealthy = pane.status === 'STANDBY' || pane.status === 'IDLE' || pane.status === 'DONE';
 
-  const inGlitchWindow =
-    isFault && faultSinceMs !== null && Date.now() - faultSinceMs < 1000;
+  const inGlitchWindow = isFault && faultSinceMs !== null && Date.now() - faultSinceMs < 1000;
 
   let borderColor: string;
   if (inGlitchWindow) borderColor = color.amber;
@@ -129,12 +124,7 @@ export function Pane({
     const isMatch = re ? re.test(line) : false;
     if (isMatch) matchCount++;
     return (
-      <Text
-        key={i}
-        color={isMatch ? color.amber : color.text}
-        bold={isMatch}
-        wrap="truncate-end"
-      >
+      <Text key={i} color={isMatch ? color.amber : color.text} bold={isMatch} wrap="truncate-end">
         {line || ' '}
       </Text>
     );
@@ -143,8 +133,7 @@ export function Pane({
   const since = fmtAgo(metrics?.lastDispatchAt);
   const dur = metrics?.durationMs ? fmtDuration(metrics.durationMs) : '—';
   const cost = metrics?.costUsd ? fmtCost(metrics.costUsd) : '—';
-  const retries =
-    pane.retries > 0 ? `· retry ${pane.retries}/${pane.maxRetries}` : '';
+  const retries = pane.retries > 0 ? `· retry ${pane.retries}/${pane.maxRetries}` : '';
 
   return (
     <Box flexDirection="column" width={width} height={height}>
@@ -156,7 +145,8 @@ export function Pane({
         <Box>
           {metrics?.confidence !== undefined ? (
             <Text color={confidenceColor(metrics.confidence, color)}>
-              {confidenceBadge(metrics.confidence)} {metrics.confidence.toFixed(2)}{'  '}
+              {confidenceBadge(metrics.confidence)} {metrics.confidence.toFixed(2)}
+              {'  '}
             </Text>
           ) : null}
           <Text color={s.color} bold={targeted || isFault || isEngaged}>
@@ -190,9 +180,7 @@ export function Pane({
           <Box paddingX={1} justifyContent="space-between">
             <Text color={color.inactive}>
               last: {since} · dur: {dur} {retries}
-              {scrolledBack ? (
-                <Text color={color.amber}> · ↑{scrollOffset}</Text>
-              ) : null}
+              {scrolledBack ? <Text color={color.amber}> · ↑{scrollOffset}</Text> : null}
             </Text>
             <Text color={color.inactive}>cost: {cost}</Text>
           </Box>

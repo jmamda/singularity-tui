@@ -17,11 +17,7 @@
  */
 
 import { store } from '../store.js';
-import {
-  checkCapabilities,
-  nextCapabilityId,
-  type Capability,
-} from './capabilities.js';
+import { checkCapabilities, nextCapabilityId, type Capability } from './capabilities.js';
 
 export const MCP_CALLER_SLOT = 0;
 
@@ -47,8 +43,17 @@ export async function runSelfModTool(name: string, args: any): Promise<any> {
           type: 'text',
           text: JSON.stringify(
             {
-              panes: s.panes.map((p) => ({ slot: p.slot, label: p.label, kind: p.kind, status: p.status })),
-              capabilities: s.capabilities.map((c) => ({ slot: c.slot, kind: c.kind, pattern: c.pattern })),
+              panes: s.panes.map((p) => ({
+                slot: p.slot,
+                label: p.label,
+                kind: p.kind,
+                status: p.status,
+              })),
+              capabilities: s.capabilities.map((c) => ({
+                slot: c.slot,
+                kind: c.kind,
+                pattern: c.pattern,
+              })),
               trust: s.trust,
               artifacts: s.artifacts.length,
             },

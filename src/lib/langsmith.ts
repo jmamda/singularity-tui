@@ -60,7 +60,13 @@ function toRow(r: LangSmithRun): MonitorRow {
 export async function fetchSnapshot(): Promise<LangSmithSnapshot> {
   const key = process.env.LANGSMITH_API_KEY;
   if (!key) {
-    return { rows: [], active: 0, faults: 0, fetchedAt: Date.now(), error: 'LANGSMITH_API_KEY not set' };
+    return {
+      rows: [],
+      active: 0,
+      faults: 0,
+      fetchedAt: Date.now(),
+      error: 'LANGSMITH_API_KEY not set',
+    };
   }
   try {
     const body: Record<string, unknown> = { limit: 20, order: 'desc' };
@@ -100,7 +106,10 @@ export function renderTable(rows: MonitorRow[], note?: string): string {
   const sep = '─'.repeat(header.length);
   const body = rows.length
     ? rows
-        .map((r) => `${r.id.padEnd(10)}${r.name.padEnd(26)}${r.status.padEnd(12)}${r.duration.padEnd(10)}${r.tokens}`)
+        .map(
+          (r) =>
+            `${r.id.padEnd(10)}${r.name.padEnd(26)}${r.status.padEnd(12)}${r.duration.padEnd(10)}${r.tokens}`,
+        )
         .join('\n')
     : '(no recent runs)';
   const hint = note ? `\n\n${note}` : '';

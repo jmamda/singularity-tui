@@ -37,10 +37,7 @@ export function bootLineAt(elapsedMs: number, lineIdx: number): string {
   const start = lineIdx * BOOT_PER_LINE;
   if (elapsedMs < start) return '';
   const line = BOOT_LINES[lineIdx] ?? '';
-  const charsShown = Math.min(
-    line.length,
-    Math.floor((elapsedMs - start) / BOOT_CHAR_DELAY),
-  );
+  const charsShown = Math.min(line.length, Math.floor((elapsedMs - start) / BOOT_CHAR_DELAY));
   return line.slice(0, charsShown);
 }
 

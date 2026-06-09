@@ -35,12 +35,16 @@ function run(cmd: string, args: string[]): Promise<{ ok: boolean; reason?: strin
   return new Promise((resolve) => {
     const p = spawn(cmd, args, { stdio: 'ignore' });
     p.on('error', (e) => resolve({ ok: false, reason: String(e) }));
-    p.on('exit', (code) => resolve({ ok: code === 0, reason: code === 0 ? undefined : `${cmd} exit ${code}` }));
+    p.on('exit', (code) =>
+      resolve({ ok: code === 0, reason: code === 0 ? undefined : `${cmd} exit ${code}` }),
+    );
   });
 }
 
 /** Optional: transcribe a wav with whisper.cpp if installed. Stub for v1. */
-export async function listen(path: string): Promise<{ ok: boolean; text?: string; reason?: string }> {
+export async function listen(
+  path: string,
+): Promise<{ ok: boolean; text?: string; reason?: string }> {
   if (!(await which('whisper'))) {
     return { ok: false, reason: 'whisper CLI not installed' };
   }

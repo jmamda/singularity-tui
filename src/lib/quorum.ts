@@ -42,7 +42,8 @@ export function tally(votes: Vote[] | WeightedVote[]): Tally {
   if (yesWeighted + noWeighted === 0) {
     return { yes, no, abstain, yesWeighted, noWeighted, verdict: 'PENDING' };
   }
-  if (yesWeighted > noWeighted) return { yes, no, abstain, yesWeighted, noWeighted, verdict: 'YES' };
+  if (yesWeighted > noWeighted)
+    return { yes, no, abstain, yesWeighted, noWeighted, verdict: 'YES' };
   if (noWeighted > yesWeighted) return { yes, no, abstain, yesWeighted, noWeighted, verdict: 'NO' };
   return { yes, no, abstain, yesWeighted, noWeighted, verdict: 'TIE' };
 }

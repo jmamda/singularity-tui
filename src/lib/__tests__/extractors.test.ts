@@ -41,8 +41,26 @@ describe('extractClarifications', () => {
 
 describe('extractComments + resolveArtifactRef', () => {
   const arts: Artifact[] = [
-    { id: 'a1', seq: 14, sourceSlot: 1, sourceLabel: 'CLAUDE', lang: 'ts', content: 'export function h(){}', createdAt: 1, title: 'src/auth/middleware.ts' },
-    { id: 'a2', seq: 15, sourceSlot: 2, sourceLabel: 'OPENCODE', lang: 'py', content: 'def calc(): ...', createdAt: 2, title: 'def calc()' },
+    {
+      id: 'a1',
+      seq: 14,
+      sourceSlot: 1,
+      sourceLabel: 'CLAUDE',
+      lang: 'ts',
+      content: 'export function h(){}',
+      createdAt: 1,
+      title: 'src/auth/middleware.ts',
+    },
+    {
+      id: 'a2',
+      seq: 15,
+      sourceSlot: 2,
+      sourceLabel: 'OPENCODE',
+      lang: 'py',
+      content: 'def calc(): ...',
+      createdAt: 2,
+      title: 'def calc()',
+    },
   ];
   it('extracts COMMENT-ON markers', () => {
     const cs = extractComments('COMMENT-ON: #14 :: n+1 query here');

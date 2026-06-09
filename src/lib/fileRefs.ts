@@ -42,7 +42,10 @@ const EXT_LANG: Record<string, string> = {
   '.toml': 'toml',
 };
 
-export async function resolveFileRefs(text: string, cwd = process.cwd()): Promise<{
+export async function resolveFileRefs(
+  text: string,
+  cwd = process.cwd(),
+): Promise<{
   prompt: string;
   refs: ResolvedRef[];
 }> {
@@ -64,7 +67,7 @@ export async function resolveFileRefs(text: string, cwd = process.cwd()): Promis
     if (start !== undefined) {
       const lines = content.split('\n');
       const lo = Math.max(0, start - 1);
-      const hi = Math.min(lines.length, (end ?? start) );
+      const hi = Math.min(lines.length, end ?? start);
       content = lines.slice(lo, hi).join('\n');
     }
     refs.push({
@@ -79,7 +82,9 @@ export async function resolveFileRefs(text: string, cwd = process.cwd()): Promis
   if (refs.length === 0) return { prompt: text, refs: [] };
   const header = refs
     .map((r) => {
-      const range = r.startLine ? ` L${r.startLine}${r.endLine && r.endLine !== r.startLine ? '-L' + r.endLine : ''}` : '';
+      const range = r.startLine
+        ? ` L${r.startLine}${r.endLine && r.endLine !== r.startLine ? '-L' + r.endLine : ''}`
+        : '';
       return `[ref: ${r.path}${range}]\n\`\`\`${r.lang}\n${r.content}\n\`\`\``;
     })
     .join('\n\n');

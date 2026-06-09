@@ -34,7 +34,13 @@ Be terse. Skip generic praise.
 `;
 
 export async function runReview(prNumber: string, target: string): Promise<number> {
-  const meta = await gh(['pr', 'view', prNumber, '--json', 'title,author,baseRefName,headRefName,body']);
+  const meta = await gh([
+    'pr',
+    'view',
+    prNumber,
+    '--json',
+    'title,author,baseRefName,headRefName,body',
+  ]);
   if (!meta.ok) {
     process.stderr.write(`gh pr view failed: ${meta.err.trim()}\n`);
     return 2;
@@ -44,8 +50,9 @@ export async function runReview(prNumber: string, target: string): Promise<numbe
     process.stderr.write(`gh pr diff failed: ${diff.err.trim()}\n`);
     return 2;
   }
-  const prompt = REVIEW_TEMPLATE
-    .replace('{{meta}}', meta.out.trim())
-    .replace('{{diff}}', diff.out.slice(0, 60_000));
+  const prompt = REVIEW_TEMPLATE.replace('{{meta}}', meta.out.trim()).replace(
+    '{{diff}}',
+    diff.out.slice(0, 60_000),
+  );
   return await runHeadless({ target, prompt });
 }

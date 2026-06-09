@@ -10,7 +10,10 @@ export async function loadEnvFile(): Promise<void> {
       if (!m) continue;
       const key = m[1]!;
       let val = m[2]!;
-      if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      if (
+        (val.startsWith('"') && val.endsWith('"')) ||
+        (val.startsWith("'") && val.endsWith("'"))
+      ) {
         val = val.slice(1, -1);
       }
       if (!(key in process.env)) process.env[key] = val;

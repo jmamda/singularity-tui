@@ -1,11 +1,7 @@
 import type { Adapter, AdapterEvent } from './types.js';
 import { sendToSession } from '../iterm/launch.js';
 
-export function makeItermAdapter(args: {
-  id: string;
-  label: string;
-  sessionId: string;
-}): Adapter {
+export function makeItermAdapter(args: { id: string; label: string; sessionId: string }): Adapter {
   return {
     id: args.id,
     label: args.label,
