@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.1
+
+### Patch Changes
+
+- 31f5ecf: The TUI now owns the terminal background while running (OSC 11): the themed background is applied on launch, re-applied on `/theme`, and restored on exit. Fixes the user's terminal profile color flashing through unpainted cells during repaints.
+- 1f46477: README: add live screenshots of the demo console (broadcast race + settled war-room).
+
 ## 0.7.0
 
 ### Minor Changes
@@ -24,7 +31,7 @@
 
 **`/edit` data-corruption guard** — `src/commands/registry.ts`. Empty `find` previously caused `before.split('').join(replace)` to interpolate `replace` between every byte. Now rejected with `find string cannot be empty`. Regression test in `src/lib/__tests__/edit.test.ts`.
 
-**Sentinel sensitivity** — `src/lib/sentinel.ts`. SENSITIVE_WRITE regexes now match path _segments_ anywhere, not just the leading slash. Catches relative writes to `etc/passwd`, `config/.ssh/id_rsa`, `…/private/…`.
+**Sentinel sensitivity** — `src/lib/sentinel.ts`. SENSITIVE*WRITE regexes now match path \_segments* anywhere, not just the leading slash. Catches relative writes to `etc/passwd`, `config/.ssh/id_rsa`, `…/private/…`.
 
 **MCP buffer cap** — `src/mcp.ts`. JSON-RPC stdio parser now caps the line buffer at 8 MiB; resyncs at the next newline on overflow. Prevents a misbehaving peer from OOM'ing the server.
 

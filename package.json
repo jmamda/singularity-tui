@@ -1,6 +1,6 @@
 {
   "name": "singularity-tui",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Code-red TUI dispatcher for AI coding CLIs (Claude Code, OpenCode, Codex, Antigravity) with LangGraph workflow monitoring.",
   "type": "module",
   "bin": {
