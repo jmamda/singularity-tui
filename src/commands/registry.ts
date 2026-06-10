@@ -570,7 +570,12 @@ register({
     if (!arg || arg === 'list') {
       return { ok: true, message: 'themes: ' + listThemes().join(', ') };
     }
-    if (setTheme(arg)) return { ok: true, message: `theme: ${arg}` };
+    if (setTheme(arg)) {
+      const { setTerminalBackground } = await import('../lib/termBg.js');
+      const { currentTheme } = await import('../lib/themes.js');
+      setTerminalBackground(currentTheme().bg);
+      return { ok: true, message: `theme: ${arg}` };
+    }
     return { ok: false, message: `unknown theme: ${arg}` };
   },
 });

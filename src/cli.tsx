@@ -370,6 +370,14 @@ keys: [1-4] toggle target · [Tab] cycle single target · [↑↓] prompt histor
     await ensureDemoProfile();
     profile = 'demo';
   }
+
+  // Ink only colors the cells it draws — own the terminal background while
+  // the TUI runs so the theme isn't polluted by the user's profile color.
+  const { setTerminalBackground, resetTerminalBackground } = await import('./lib/termBg.js');
+  const { color } = await import('./theme.js');
+  setTerminalBackground(color.bg);
+  process.on('exit', resetTerminalBackground);
+
   const instance = render(<App profile={profile} />);
 
   // Crash safety: a throw in any fire-and-forget path must not leave the
