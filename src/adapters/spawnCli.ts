@@ -144,8 +144,14 @@ export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
         finish();
       });
 
-      child.on('exit', (code: number | null) => {
-        if (done) return;
+      // 'exit' can fire before the last stdout 'data' on slow machines —
+      // finalize only once the process has exited AND stdout has closed,
+      // otherwise trailing tokens (and cost) are silently dropped.
+      let exitCode: number | null = null;
+      let exited = false;
+      let stdoutClosed = false;
+      const finalize = () => {
+        if (done || !exited || !stdoutClosed) return;
         // Flush trailing buffer (no newline at EOF)
         if (buffer) {
           if (config.parseLine) {
@@ -162,8 +168,19 @@ export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
             (inTokens * config.pricing.inPerM + outTokens * config.pricing.outPerM) / 1_000_000;
           push({ type: 'cost', tokensIn: inTokens, tokensOut: outTokens, usd });
         }
-        push({ type: 'status', status: code === 0 ? 'DONE' : 'FAULT' });
+        push({ type: 'status', status: exitCode === 0 ? 'DONE' : 'FAULT' });
         finish();
+      };
+
+      child.stdout!.on('close', () => {
+        stdoutClosed = true;
+        finalize();
+      });
+
+      child.on('exit', (code: number | null) => {
+        exitCode = code;
+        exited = true;
+        finalize();
       });
 
       try {
