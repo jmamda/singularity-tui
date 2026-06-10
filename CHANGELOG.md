@@ -70,7 +70,7 @@ Closes the 25-item gap list between "released" and "discoverable, adoptable open
 
 **Distribution**
 - `Dockerfile` (multi-stage, alpine-based; `singularity` entrypoint)
-- `brew/Formula/singularity-cli.rb` (formula template)
+- `brew/Formula/singularity-tui.rb` (formula template)
 - CI matrix: Linux + macOS + Windows × Node 20 + 22, plus a Docker build job on main.
 - `.changeset/` config + `.github/workflows/release.yml` (changesets → npm publish + GitHub release).
 

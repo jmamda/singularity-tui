@@ -27,7 +27,7 @@ function fmtIcsTime(d: Date): string {
 }
 
 function uid(): string {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}@singularity-cli`;
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}@singularity-tui`;
 }
 
 function escapeIcs(s: string): string {

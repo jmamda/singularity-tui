@@ -1,2 +1,2 @@
 $ErrorActionPreference = 'Stop'
-npm install -g singularity-cli@0.4.0
+npm install -g singularity-tui@0.4.0

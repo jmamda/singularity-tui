@@ -1,15 +1,15 @@
 # Singularity CLI
 
-[![npm](https://img.shields.io/npm/v/singularity-cli.svg)](https://www.npmjs.com/package/singularity-cli)
+[![npm](https://img.shields.io/npm/v/singularity-tui.svg)](https://www.npmjs.com/package/singularity-tui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](#requirements)
-[![CI](https://github.com/singularity-cli/singularity-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/singularity-cli/singularity-cli/actions/workflows/ci.yml)
+[![CI](https://github.com/jmamda/singularity-tui/actions/workflows/ci.yml/badge.svg)](https://github.com/jmamda/singularity-tui/actions/workflows/ci.yml)
 
 > **Race, vote, relay, and plan across multiple AI coding CLIs from a single prompt bar.** A war-room, not a chat. Built with an opt-in governance layer so you can safely hand the machine over to agents.
 
 ```bash
 # 60-second try (no API keys needed for --demo)
-npx singularity-cli@latest --demo  # boot the demo profile
+npx singularity-tui@latest --demo  # boot the demo profile
 singularity wizard                 # set up the CLIs you have
 singularity                        # launch the room
 ```

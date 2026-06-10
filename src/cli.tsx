@@ -108,7 +108,7 @@ async function main() {
   const [cmd, ...rest] = process.argv.slice(2);
 
   if (cmd === 'version' || cmd === '--version' || cmd === '-v') {
-    process.stdout.write(`singularity-cli ${packageVersion()}\n`);
+    process.stdout.write(`singularity-tui ${packageVersion()}\n`);
     return;
   }
 

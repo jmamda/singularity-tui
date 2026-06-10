@@ -1,10 +1,10 @@
-# Maintainer: singularity-cli contributors
-pkgname=singularity-cli
+# Maintainer: singularity-tui contributors
+pkgname=singularity-tui
 pkgver=0.6.0
 pkgrel=1
 pkgdesc='Code-red TUI dispatcher for AI coding CLIs'
 arch=('any')
-url='https://github.com/singularity-cli/singularity-cli'
+url='https://github.com/jmamda/singularity-tui'
 license=('MIT')
 depends=('nodejs>=20')
 makedepends=('npm')

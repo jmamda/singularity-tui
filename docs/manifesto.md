@@ -75,7 +75,7 @@ If we got it wrong, the lesson is still worth learning: which of these primitive
 ## Where to start
 
 ```bash
-npx singularity-cli@latest         # try it
+npx singularity-tui@latest         # try it
 singularity wizard                 # set up auth for the CLIs you have
 singularity                        # launch the war-room
 ?should I deploy on a friday       # quorum vote across all panes

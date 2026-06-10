@@ -7,7 +7,7 @@
 const STEPS: Array<{ prompt: string; output: string; delay?: number }> = [
   {
     prompt: '',
-    output: `\n● SINGULARITY CLI — SHOWCASE\n────────────────────────────\nDeterministic walkthrough. No models called. No keys needed.\nFor the real UI: \`npm run dev\` or \`npx singularity-cli --demo\`.\n\n`,
+    output: `\n● SINGULARITY CLI — SHOWCASE\n────────────────────────────\nDeterministic walkthrough. No models called. No keys needed.\nFor the real UI: \`npm run dev\` or \`npx singularity-tui --demo\`.\n\n`,
   },
   {
     prompt: 'fizzbuzz in python',
@@ -45,7 +45,7 @@ const STEPS: Array<{ prompt: string; output: string; delay?: number }> = [
   },
   {
     prompt: '',
-    output: `\n────────────────────────────\nThat's the dispatch grammar.\nFull TUI: \`npm run dev\` or \`npx singularity-cli --demo\`.\nManifesto: docs/manifesto.md\nPatterns: PATTERNS.md\n────────────────────────────\n`,
+    output: `\n────────────────────────────\nThat's the dispatch grammar.\nFull TUI: \`npm run dev\` or \`npx singularity-tui --demo\`.\nManifesto: docs/manifesto.md\nPatterns: PATTERNS.md\n────────────────────────────\n`,
   },
 ];
 

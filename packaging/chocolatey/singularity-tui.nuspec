@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
-    <id>singularity-cli</id>
+    <id>singularity-tui</id>
     <version>0.6.0</version>
-    <packageSourceUrl>https://github.com/singularity-cli/singularity-cli</packageSourceUrl>
-    <owners>singularity-cli</owners>
+    <packageSourceUrl>https://github.com/jmamda/singularity-tui</packageSourceUrl>
+    <owners>singularity-tui</owners>
     <title>Singularity CLI</title>
     <authors>Singularity contributors</authors>
-    <projectUrl>https://github.com/singularity-cli/singularity-cli</projectUrl>
-    <licenseUrl>https://github.com/singularity-cli/singularity-cli/blob/main/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/jmamda/singularity-tui</projectUrl>
+    <licenseUrl>https://github.com/jmamda/singularity-tui/blob/main/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <projectSourceUrl>https://github.com/singularity-cli/singularity-cli</projectSourceUrl>
-    <docsUrl>https://github.com/singularity-cli/singularity-cli#readme</docsUrl>
-    <bugTrackerUrl>https://github.com/singularity-cli/singularity-cli/issues</bugTrackerUrl>
+    <projectSourceUrl>https://github.com/jmamda/singularity-tui</projectSourceUrl>
+    <docsUrl>https://github.com/jmamda/singularity-tui#readme</docsUrl>
+    <bugTrackerUrl>https://github.com/jmamda/singularity-tui/issues</bugTrackerUrl>
     <tags>cli tui ai llm anthropic openai opencode dispatcher</tags>
     <summary>Code-red TUI dispatcher for AI coding CLIs</summary>
     <description>

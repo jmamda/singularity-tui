@@ -1,5 +1,5 @@
 {
-  "name": "singularity-cli",
+  "name": "singularity-tui",
   "version": "0.6.0",
   "description": "Code-red TUI dispatcher for AI coding CLIs (Claude Code, OpenCode, Codex, Antigravity) with LangGraph workflow monitoring.",
   "type": "module",
@@ -24,10 +24,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/singularity-cli/singularity-cli.git"
+    "url": "git+https://github.com/jmamda/singularity-tui.git"
   },
-  "bugs": "https://github.com/singularity-cli/singularity-cli/issues",
-  "homepage": "https://github.com/singularity-cli/singularity-cli#readme",
+  "bugs": "https://github.com/jmamda/singularity-tui/issues",
+  "homepage": "https://github.com/jmamda/singularity-tui#readme",
   "keywords": [
     "cli",
     "tui",

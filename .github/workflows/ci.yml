@@ -43,4 +43,4 @@ jobs:
         with:
           context: .
           push: false
-          tags: singularity-cli:dev
+          tags: singularity-tui:dev

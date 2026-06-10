@@ -38,7 +38,7 @@ if (!sha) {
 
 const edits = [
   {
-    file: 'packaging/scoop/singularity-cli.json',
+    file: 'packaging/scoop/singularity-tui.json',
     apply(text) {
       const json = JSON.parse(text);
       json.version = version;
@@ -48,7 +48,7 @@ const edits = [
     },
   },
   {
-    file: 'brew/Formula/singularity-cli.rb',
+    file: 'brew/Formula/singularity-tui.rb',
     apply(text) {
       let out = text.replace(/url "https:\/\/registry\.npmjs\.org\/[^"]+"/, `url "${tarballUrl}"`);
       if (sha) out = out.replace(/sha256 "[^"]*"/, `sha256 "${sha}"`);
@@ -64,7 +64,7 @@ const edits = [
     },
   },
   {
-    file: 'packaging/chocolatey/singularity-cli.nuspec',
+    file: 'packaging/chocolatey/singularity-tui.nuspec',
     apply(text) {
       return text.replace(/<version>[^<]*<\/version>/, `<version>${version}</version>`);
     },

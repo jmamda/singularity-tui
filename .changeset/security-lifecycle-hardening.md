@@ -1,5 +1,5 @@
 ---
-'singularity-cli': minor
+'singularity-tui': minor
 ---
 
 Security, process-lifecycle, and release-readiness hardening.

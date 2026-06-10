@@ -9,7 +9,7 @@
       let pkgs = nixpkgs.legacyPackages.${system};
       in {
         packages.default = pkgs.buildNpmPackage {
-          pname = "singularity-cli";
+          pname = "singularity-tui";
           version = "0.4.0";
           src = ./.;
           npmDepsHash = pkgs.lib.fakeHash; # replace with real hash via `nix-prefetch`
