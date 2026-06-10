@@ -9,7 +9,7 @@ class SingularityTui < Formula
   desc "Code-red TUI dispatcher for AI coding CLIs"
   homepage "https://github.com/jmamda/singularity-tui"
   url "https://registry.npmjs.org/singularity-tui/-/singularity-tui-0.7.1.tgz"
-  sha256 "f359c03ab74c628acc3f40cd225e825c3019f3b04d76d9fe7b69b715c2874a48"
+  sha256 "b598360282a3af4773d8890bc2f8b2c3c002da37a93d09f69d0bb7f84d5a06b9"
   license "MIT"
 
   depends_on "node"
