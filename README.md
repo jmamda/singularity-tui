@@ -16,6 +16,12 @@ singularity                        # launch the room
 
 > **Not to be confused with [Singularity](https://sylabs.io/singularity/) the HPC container runtime.** Different project, different domain.
 
+![Broadcast race across all panes](https://raw.githubusercontent.com/jmamda/singularity-tui/main/docs/screenshots/broadcast.png)
+*`!` broadcast racing all panes in parallel — live race bars, per-pane status, artifacts extracted as they stream.*
+
+![Settled console with artifacts](https://raw.githubusercontent.com/jmamda/singularity-tui/main/docs/screenshots/console.png)
+*The war-room at rest: 2×2 pane grid, artifact pane with captured code blocks, timeline strip, prompt bar.*
+
 ## Where to start
 
 - [docs/manifesto.md](./docs/manifesto.md) — why this exists, in plain prose.
