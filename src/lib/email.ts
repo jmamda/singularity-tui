@@ -38,7 +38,7 @@ async function makeConn(host: string, port: number, implicitTls: boolean): Promi
   });
 
   let buf = '';
-  let resolvers: ((s: string) => void)[] = [];
+  const resolvers: ((s: string) => void)[] = [];
   socket.on('data', (chunk: Buffer) => {
     buf += chunk.toString('utf8');
     while (resolvers.length > 0) {

@@ -139,7 +139,6 @@ export function ArtifactPane({ targeted, width, height }: Props) {
   const windowItems = listEntries.slice(windowStart, windowStart + innerHeight);
 
   const detailLines = current ? current.content.split('\n') : [];
-  const visibleDetail = detailLines.slice(0, innerHeight);
 
   // "Just-added" flashing color (alternates white↔accent every ~80ms)
   const flashOn = tick % 2 === 0;

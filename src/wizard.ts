@@ -184,6 +184,7 @@ async function checkLangSmith(rl: readline.Interface): Promise<Check> {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- deliberately parked; see the commented-out call in the wizard loop
 async function checkAntigravity(rl: readline.Interface): Promise<Check> {
   if (process.env.SINGULARITY_ANTIGRAVITY_CMD) {
     return {

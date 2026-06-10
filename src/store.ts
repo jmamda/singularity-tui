@@ -173,6 +173,9 @@ function updatePane(slot: Slot, patch: (p: PaneState) => PaneState) {
   }));
 }
 
+const MAX_OUTPUT_ENTRY_CHARS = 8 * 1024;
+const MAX_OUTPUT_ENTRIES = 512; // ~4MB worst case per pane
+
 export const store = {
   getState: () => state,
   subscribe: (l: Listener) => {
@@ -190,7 +193,17 @@ export const store = {
     })),
 
   appendOutput: (slot: Slot, text: string) =>
-    updatePane(slot, (p) => ({ ...p, output: [...p.output, text] })),
+    updatePane(slot, (p) => {
+      // Coalesce streaming chunks into the last entry (Pane joins with '' so
+      // entry boundaries are cosmetic), and cap entries so long sessions
+      // don't grow memory without bound.
+      const last = p.output[p.output.length - 1];
+      const output =
+        last !== undefined && last.length + text.length <= MAX_OUTPUT_ENTRY_CHARS
+          ? [...p.output.slice(0, -1), last + text]
+          : [...p.output, text].slice(-MAX_OUTPUT_ENTRIES);
+      return { ...p, output };
+    }),
 
   clearOutput: (slot: Slot) => updatePane(slot, (p) => ({ ...p, output: [] })),
 
@@ -524,7 +537,9 @@ function shallowEqual(a: unknown, b: unknown): boolean {
   const ka = Object.keys(a as object);
   const kb = Object.keys(b as object);
   if (ka.length !== kb.length) return false;
-  return ka.every((k) => Object.is((a as any)[k], (b as any)[k]));
+  return ka.every((k) =>
+    Object.is((a as Record<string, unknown>)[k], (b as Record<string, unknown>)[k]),
+  );
 }
 
 /**

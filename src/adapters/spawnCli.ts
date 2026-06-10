@@ -20,12 +20,28 @@ export interface SpawnCliConfig {
   squelchStderr?: boolean;
   /** If true, inline opts.persona into the prompt (for adapters with no --system flag). */
   inlinePersona?: boolean;
+  /** Kill the child if a dispatch runs longer than this. Default 10 minutes. */
+  timeoutMs?: number;
 }
 
 const defaultEstimate = (text: string) => Math.max(1, Math.ceil(text.length / 4));
 
+const DEFAULT_TIMEOUT_MS = 10 * 60 * 1000;
+const SIGKILL_GRACE_MS = 5_000;
+
+/** SIGTERM, then SIGKILL if the process is still alive after a grace period. */
+function killWithEscalation(child: ChildProcess): void {
+  if (child.exitCode !== null || child.signalCode !== null) return;
+  child.kill('SIGTERM');
+  const killer = setTimeout(() => {
+    if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
+  }, SIGKILL_GRACE_MS);
+  killer.unref();
+}
+
 export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
-  let proc: ChildProcess | null = null;
+  // One adapter can have multiple in-flight dispatches (broadcast/race); track all.
+  const procs = new Set<ChildProcess>();
 
   return {
     id: config.id,
@@ -43,11 +59,11 @@ export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
           ? `[system]\n${opts.persona}\n[/system]\n\n${prompt}`
           : prompt;
       const args = config.argsForPrompt(effectivePrompt, opts);
-      proc = spawn(config.command, args, {
+      const child = spawn(config.command, args, {
         stdio: ['ignore', 'pipe', 'pipe'],
         env: config.env ? { ...process.env, ...config.env } : process.env,
       });
-      const child = proc;
+      procs.add(child);
 
       const queue: AdapterEvent[] = [];
       let resolveNext: ((value: IteratorResult<AdapterEvent>) => void) | null = null;
@@ -71,6 +87,17 @@ export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
       const estimate = config.estimateTokens ?? defaultEstimate;
       const inTokens = estimate(effectivePrompt);
 
+      const emitParsed = (line: string) => {
+        const ev = config.parseLine!(line);
+        if (!ev) return;
+        // accumulate token text so cost estimation works for parseLine adapters too
+        const items = Array.isArray(ev) ? ev : [ev];
+        for (const e of items) {
+          if (e.type === 'token') outputText += e.text;
+        }
+        push(ev);
+      };
+
       child.stdout!.on('data', (chunk: Buffer) => {
         buffer += chunk.toString('utf8');
         // If no custom parser, stream the chunk as-is (good for plain text).
@@ -84,14 +111,7 @@ export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
           const line = buffer.slice(0, nl);
           buffer = buffer.slice(nl + 1);
           if (!line) continue;
-          const ev = config.parseLine(line);
-          if (!ev) continue;
-          // accumulate token text so cost estimation works for parseLine adapters too
-          const items = Array.isArray(ev) ? ev : [ev];
-          for (const e of items) {
-            if (e.type === 'token') outputText += e.text;
-          }
-          push(ev);
+          emitParsed(line);
         }
       });
 
@@ -109,6 +129,14 @@ export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
         }
       };
 
+      const timeoutMs = config.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+      const timeout = setTimeout(() => {
+        if (done) return;
+        push({ type: 'error', message: `dispatch timed out after ${timeoutMs}ms` });
+        killWithEscalation(child);
+      }, timeoutMs);
+      timeout.unref();
+
       child.on('error', (e) => {
         if (done) return; // error + exit can both fire; first one wins
         push({ type: 'error', message: String(e) });
@@ -119,9 +147,13 @@ export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
       child.on('exit', (code: number | null) => {
         if (done) return;
         // Flush trailing buffer (no newline at EOF)
-        if (buffer && !config.parseLine) {
-          push({ type: 'token', text: buffer });
-          outputText += buffer;
+        if (buffer) {
+          if (config.parseLine) {
+            emitParsed(buffer);
+          } else {
+            push({ type: 'token', text: buffer });
+            outputText += buffer;
+          }
           buffer = '';
         }
         if (config.pricing && outputText) {
@@ -134,22 +166,30 @@ export function makeSpawnCliAdapter(config: SpawnCliConfig): Adapter {
         finish();
       });
 
-      while (true) {
-        if (queue.length > 0) {
-          yield queue.shift()!;
-          continue;
+      try {
+        while (true) {
+          if (queue.length > 0) {
+            yield queue.shift()!;
+            continue;
+          }
+          if (done) return;
+          const ev = await new Promise<IteratorResult<AdapterEvent>>((resolve) => {
+            resolveNext = resolve;
+          });
+          if (ev.done) return;
+          yield ev.value;
         }
-        if (done) return;
-        const ev = await new Promise<IteratorResult<AdapterEvent>>((resolve) => {
-          resolveNext = resolve;
-        });
-        if (ev.done) return;
-        yield ev.value;
+      } finally {
+        // Runs on normal completion AND when the consumer abandons the
+        // iterator (break/throw/stop) — never leave an orphaned child.
+        clearTimeout(timeout);
+        procs.delete(child);
+        killWithEscalation(child);
       }
     },
     async stop() {
-      if (proc && !proc.killed) proc.kill('SIGTERM');
-      proc = null;
+      for (const child of procs) killWithEscalation(child);
+      procs.clear();
     },
   };
 }

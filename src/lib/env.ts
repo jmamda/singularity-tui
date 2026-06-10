@@ -4,6 +4,8 @@ import { ENV_FILE, DIR } from './paths.js';
 /** Read ~/.singularity/.env and merge into process.env (does not override existing values). */
 export async function loadEnvFile(): Promise<void> {
   try {
+    // Tighten perms on files created before mode 0600 was enforced.
+    await fs.chmod(ENV_FILE, 0o600).catch(() => {});
     const text = await fs.readFile(ENV_FILE, 'utf8');
     for (const line of text.split('\n')) {
       const m = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*?)\s*$/i);
@@ -35,5 +37,7 @@ export async function upsertEnvFile(key: string, value: string): Promise<void> {
   // strip trailing empties
   while (lines.length && !lines[lines.length - 1]!.trim()) lines.pop();
   lines.push(`${key}=${value}`);
-  await fs.writeFile(ENV_FILE, lines.join('\n') + '\n', 'utf8');
+  await fs.writeFile(ENV_FILE, lines.join('\n') + '\n', { encoding: 'utf8', mode: 0o600 });
+  // writeFile mode only applies on create; enforce for pre-existing files too.
+  await fs.chmod(ENV_FILE, 0o600).catch(() => {});
 }

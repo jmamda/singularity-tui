@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/singularity-cli.svg)](https://www.npmjs.com/package/singularity-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](#requirements)
-[![Tests](https://img.shields.io/badge/tests-107%20passing-brightgreen.svg)](./src)
+[![CI](https://github.com/singularity-cli/singularity-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/singularity-cli/singularity-cli/actions/workflows/ci.yml)
 
 > **Race, vote, relay, and plan across multiple AI coding CLIs from a single prompt bar.** A war-room, not a chat. Built with an opt-in governance layer so you can safely hand the machine over to agents.
 
@@ -127,7 +127,7 @@ The actual interactive CLIs run in real iTerm2 sessions — so they get the full
 | `singularity recipe list` | list available recipes |
 | `singularity recipe <name> [--var=value]` | run a recipe (see Recipes below) |
 | `singularity serve --mcp` | act as an MCP server (stdio) for other agents to call |
-| `singularity serve --http [--port N]` | REST + SSE HTTP server with OpenAPI |
+| `singularity serve --http [--port N] [--host H]` | REST + SSE HTTP server with OpenAPI (binds 127.0.0.1; non-loopback requires `SINGULARITY_SERVER_PASSWORD`) |
 | `singularity web [--port N] [--open]` | same HTTP server + tiny embedded browser UI |
 | `singularity daemon` | run configured OS-event triggers in the background |
 | `singularity showcase [--fast]` | scripted demo walkthrough |
@@ -172,26 +172,18 @@ Adding a new CLI tool is one file using the `makeSpawnCliAdapter` factory — se
 
 ```
 src/
-  cli.tsx                  entry + subcommands (launch, down, status)
-  App.tsx                  controller TUI + key handling
-  theme.ts                 red palette + status vocabulary + glyphs
-  store.ts                 global state (panes, target, prompt, iterm mode)
-  adapters/
-    types.ts               Adapter interface
-    claude.ts              real: spawns `claude -p`
-    iterm.ts               iTerm2-session adapter
-    opencode/codex/...     stubs
-  components/
-    StatusBar.tsx          top bar + clock
-    Pane.tsx               one pane (pulse/shimmer/glitch + status footer)
-    PromptBar.tsx          bottom input
-    BootScreen.tsx         typewriter boot intro
-  lib/
-    useTick.ts             animation timer hook
-    effects.ts             pulse/shimmer/glitch/boot helpers
-    which.ts               PATH lookup
-  iterm/
-    launch.ts              AppleScript: create 2x2, get session ids
-    state.ts               persist ~/.singularity/state.json
-    applescript.ts         osascript runner
+  cli.tsx           entry + subcommands (launch, wizard, serve, recipe, …)
+  App.tsx           controller TUI + key handling
+  dispatcher.ts     dispatch orchestration + operator grammar routing
+  store.ts          global state (panes, targets, artifacts, capabilities, trust)
+  httpServer.ts     REST + SSE server (`serve --http`, `web`)
+  mcp.ts            MCP stdio server (`serve --mcp`)
+  adapters/         one file per CLI/API backend (claude, opencode, codex, …)
+  commands/         slash-command registry
+  components/       Ink components (panes, bars, overlays, tickers)
+  lib/              everything else: governance (capabilities/sentinel/shadowfs/
+                    trust), recipes, triggers, notes, artifacts, plan-exec, …
+  iterm/            AppleScript integration for native split mode
 ```
+
+See [docs/architecture.md](./docs/architecture.md) for the full module map.

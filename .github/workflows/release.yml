@@ -29,9 +29,11 @@ jobs:
       # unscoped package cannot be published with restricted access. When the
       # project goes public, restore:
       #   publish: npm publish --provenance --access public
+      # version also syncs brew/scoop/choco/AUR manifests so the Version
+      # Packages PR carries the packaging bumps and they can't drift.
       - name: Changesets — version PR
         uses: changesets/action@v1
         with:
-          version: npx changeset version
+          version: npm run version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

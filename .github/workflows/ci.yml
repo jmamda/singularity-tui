@@ -5,13 +5,18 @@ on:
     branches: [main]
   pull_request:
 
+# Cancel superseded runs on the same branch instead of burning the full matrix per push.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        node: ['20', '22']
+        node: ['20', '22', '24']
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

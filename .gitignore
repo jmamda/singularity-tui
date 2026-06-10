@@ -39,3 +39,4 @@ docs/internal/
 
 # Singularity runtime artifacts (user-specific state lives in ~/.singularity)
 .singularity-local/
+docs/launch/

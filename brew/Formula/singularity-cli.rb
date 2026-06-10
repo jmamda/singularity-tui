@@ -8,7 +8,7 @@
 class SingularityCli < Formula
   desc "Code-red TUI dispatcher for AI coding CLIs"
   homepage "https://github.com/singularity-cli/singularity-cli"
-  url "https://registry.npmjs.org/singularity-cli/-/singularity-cli-0.3.0.tgz"
+  url "https://registry.npmjs.org/singularity-cli/-/singularity-cli-0.6.0.tgz"
   sha256 "REPLACE_WITH_TARBALL_SHA256"
   license "MIT"
 

@@ -8,7 +8,7 @@ import { spawn } from 'node:child_process';
 export async function openUrl(url: string): Promise<{ ok: boolean; reason?: string }> {
   try {
     // Sanity: URL parse will throw on garbage.
-    // eslint-disable-next-line no-new
+
     new URL(url);
   } catch {
     return { ok: false, reason: 'invalid URL' };

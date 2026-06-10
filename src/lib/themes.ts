@@ -121,7 +121,7 @@ export const THEME_NAMES: string[] = Object.keys(THEMES);
 
 const NO_COLOR = Boolean(process.env.NO_COLOR);
 
-let active: Palette = NO_COLOR ? THEMES.mono! : (THEMES['code-red'] ?? THEMES.mono!);
+const active: Palette = NO_COLOR ? THEMES.mono! : (THEMES['code-red'] ?? THEMES.mono!);
 
 export function setTheme(name: string): boolean {
   const t = THEMES[name];

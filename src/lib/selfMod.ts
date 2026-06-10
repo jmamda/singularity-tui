@@ -31,7 +31,10 @@ function requireMeta(target: string): void {
   }
 }
 
-export async function runSelfModTool(name: string, args: any): Promise<any> {
+export async function runSelfModTool(
+  name: string,
+  args: Record<string, unknown>,
+): Promise<unknown> {
   // Caller identity is fixed — args.callerSlot / args.slot are ignored for
   // *caller* identity (args.slot is still used as the *target* slot below).
   const callerSlot = MCP_CALLER_SLOT;

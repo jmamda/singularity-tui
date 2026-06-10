@@ -11,6 +11,27 @@ import { runReview } from './review.js';
 import { runMcpServer } from './mcp.js';
 import { runWizard, hasWizardCompleted, confirmFirstRun } from './wizard.js';
 import { loadEnvFile } from './lib/env.js';
+import { packageVersion } from './lib/version.js';
+
+const KNOWN_COMMANDS = new Set([
+  'wizard',
+  'launch',
+  'down',
+  'status',
+  'run',
+  'watch',
+  'review',
+  'serve',
+  'showcase',
+  'web',
+  'daemon',
+  'recipe',
+  'grammar',
+  'version',
+  'help',
+]);
+
+const TUI_FLAGS = new Set(['--profile', '--demo', '--no-wizard', '--wizard']);
 
 const SPECS = [
   { slot: 1 as const, label: 'CLAUDE', command: 'claude' },
@@ -85,6 +106,18 @@ async function main() {
   await loadEnvFile();
 
   const [cmd, ...rest] = process.argv.slice(2);
+
+  if (cmd === 'version' || cmd === '--version' || cmd === '-v') {
+    process.stdout.write(`singularity-cli ${packageVersion()}\n`);
+    return;
+  }
+
+  // Reject typos instead of silently launching the TUI.
+  if (cmd && !cmd.startsWith('-') && !KNOWN_COMMANDS.has(cmd) && cmd !== '--help') {
+    console.error(`unknown command: ${cmd}\nrun \`singularity help\` for usage`);
+    process.exit(2);
+  }
+
   const wantsWizard = hasFlag('wizard') || cmd === 'wizard';
 
   if (wantsWizard) {
@@ -145,10 +178,10 @@ async function main() {
     if (hasFlag('http')) {
       const { runHttpServer } = await import('./httpServer.js');
       const port = Number(getFlag('port', '7777'));
-      await runHttpServer(port);
+      await runHttpServer(port, getFlag('host', undefined));
       return;
     }
-    console.error('usage: singularity serve --mcp | --http [--port 7777]');
+    console.error('usage: singularity serve --mcp | --http [--port 7777] [--host 127.0.0.1]');
     process.exit(2);
   }
 
@@ -174,7 +207,7 @@ async function main() {
         /* ignore */
       }
     }
-    await runHttpServer(port);
+    await runHttpServer(port, getFlag('host', undefined));
     return;
   }
 
@@ -283,6 +316,7 @@ usage:
   singularity recipe list                          list available recipes (~/.singularity/recipes + examples/recipes)
   singularity recipe <name> [--key=value]          run a recipe (headless; vars substituted into {{...}})
   singularity grammar                              print the dispatch grammar cheat sheet
+  singularity version                              print the version
   singularity help                                 this text
 
 first-run: the wizard auto-prompts the first time you launch the TUI.
@@ -300,6 +334,23 @@ in-TUI input prefixes:
 keys: [1-4] toggle target · [Tab] cycle single target · [↑↓] prompt history · [Esc] clear · [Ctrl+C] quit
 `);
     return;
+  }
+
+  // From here on we're launching the TUI: validate flags and require a TTY.
+  const unknownFlags = process.argv.slice(2).filter((a) => a.startsWith('-') && !TUI_FLAGS.has(a));
+  if (unknownFlags.length > 0) {
+    console.error(`unknown option: ${unknownFlags[0]}\nrun \`singularity help\` for usage`);
+    process.exit(2);
+  }
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    console.error(
+      'singularity needs an interactive terminal (TTY) to render the TUI.\n' +
+        'headless alternatives:\n' +
+        '  singularity run --target <id> --prompt "..."\n' +
+        '  singularity serve --http | serve --mcp\n' +
+        '  singularity showcase --fast',
+    );
+    process.exit(1);
   }
 
   // Auto-prompt first-run wizard if we're about to launch the TUI and

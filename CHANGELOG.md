@@ -20,6 +20,10 @@
 
 **Tests** — 107 passing (added recipes, edit empty-find regression, MCP caller-slot impersonation).
 
+## 0.5.0
+
+Version number skipped — no separate public release; the 0.5.x work shipped as part of 0.6.0.
+
 ## 0.4.0 — parity-plus with OpenCode
 
 Closes the gap-list against OpenCode (sst/opencode, ~169K stars). Adds dimensions OpenCode had and we didn't; keeps the dimensions where we already lead.

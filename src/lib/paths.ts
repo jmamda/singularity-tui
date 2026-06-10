@@ -1,7 +1,9 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-export const DIR = join(homedir(), '.singularity');
+// SINGULARITY_DIR override keeps tests (and parallel instances) out of the
+// real ~/.singularity.
+export const DIR = process.env.SINGULARITY_DIR ?? join(homedir(), '.singularity');
 export const PROFILES_DIR = join(DIR, 'profiles');
 export const SNIPPETS_DIR = join(DIR, 'snippets');
 export const HISTORY_DIR = join(DIR, 'history');

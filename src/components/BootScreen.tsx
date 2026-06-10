@@ -2,6 +2,12 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import { color } from '../theme.js';
 import { BOOT_LINE_COUNT, BOOT_TOTAL_MS, bootLineAt } from '../lib/effects.js';
+import { packageVersion } from '../lib/version.js';
+
+const TITLE = `S I N G U L A R I T Y   C L I   v${packageVersion()}`;
+const BANNER_TOP = `  ╔═${'═'.repeat(TITLE.length + 4)}═╗`;
+const BANNER_MID = `  ║   ${TITLE}   ║`;
+const BANNER_BOT = `  ╚═${'═'.repeat(TITLE.length + 4)}═╝`;
 
 interface Props {
   startedAt: number;
@@ -30,13 +36,13 @@ export function BootScreen({ startedAt, cols, rows }: Props) {
     >
       <Box flexDirection="column">
         <Text color={color.primary} bold>
-          {'  ╔══════════════════════════════════════════╗'}
+          {BANNER_TOP}
         </Text>
         <Text color={color.primary} bold>
-          {'  ║   S I N G U L A R I T Y   C L I   v0.1  ║'}
+          {BANNER_MID}
         </Text>
         <Text color={color.primary} bold>
-          {'  ╚══════════════════════════════════════════╝'}
+          {BANNER_BOT}
         </Text>
         <Text> </Text>
         {lines.map((l, i) => (

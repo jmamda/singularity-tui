@@ -1,7 +1,3 @@
-// Honor the NO_COLOR standard (https://no-color.org). When set, collapse the
-// whole palette to a monochrome ramp so the TUI stays legible without color.
-const NO_COLOR = Boolean(process.env.NO_COLOR);
-
 interface Palette {
   bg: string;
   primary: string;
@@ -14,32 +10,6 @@ interface Palette {
   inactive: string;
   faint: string;
 }
-
-const COLORED: Palette = {
-  bg: '#000000',
-  primary: '#ff2a2a',
-  primaryDim: '#aa1010',
-  accent: '#00ff66',
-  accentDim: '#00aa44',
-  amber: '#ffb000',
-  white: '#ffffff',
-  text: '#d0d0d0',
-  inactive: '#8a8a8a',
-  faint: '#555555',
-};
-
-const MONO: Palette = {
-  bg: '#000000',
-  primary: '#ffffff',
-  primaryDim: '#bbbbbb',
-  accent: '#ffffff',
-  accentDim: '#bbbbbb',
-  amber: '#ffffff',
-  white: '#ffffff',
-  text: '#dddddd',
-  inactive: '#999999',
-  faint: '#666666',
-};
 
 // Re-export the active theme's palette from the new theme system. setTheme()
 // mutates `color` in place so consumers (Pane, StatusBar, PromptBar, …) all

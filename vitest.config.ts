@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['src/**/__tests__/**/*.test.ts'],
+    include: ['src/**/__tests__/**/*.test.{ts,tsx}'],
     reporters: ['default'],
     coverage: {
       provider: 'v8',
@@ -21,10 +21,10 @@ export default defineConfig({
       // Thresholds set to current floor — they can only ratchet upward in PRs.
       // Raise these as more of the OS-event / TUI surfaces get covered.
       thresholds: {
-        lines: 25,
-        functions: 20,
-        statements: 25,
-        branches: 20,
+        lines: 28,
+        functions: 25,
+        statements: 27,
+        branches: 22,
       },
     },
   },

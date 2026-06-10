@@ -4,6 +4,7 @@ import { codexAdapter } from './adapters/codex.js';
 import { antigravityAdapter } from './adapters/antigravity.js';
 import { langgraphAdapter } from './adapters/langgraph.js';
 import type { Adapter } from './adapters/types.js';
+import { packageVersion } from './lib/version.js';
 
 const ADAPTERS: Adapter[] = [
   claudeAdapter,
@@ -17,22 +18,24 @@ interface JsonRpcRequest {
   jsonrpc: '2.0';
   id?: number | string | null;
   method: string;
-  params?: any;
+  params?: unknown;
 }
+
+type JsonRpcId = JsonRpcRequest['id'];
 
 function send(msg: object): void {
   process.stdout.write(JSON.stringify(msg) + '\n');
 }
 
-function reply(id: any, result: any): void {
+function reply(id: JsonRpcId, result: unknown): void {
   send({ jsonrpc: '2.0', id, result });
 }
 
-function replyError(id: any, code: number, message: string): void {
+function replyError(id: JsonRpcId, code: number, message: string): void {
   send({ jsonrpc: '2.0', id, error: { code, message } });
 }
 
-async function callTool(name: string, args: any): Promise<any> {
+async function callTool(name: string, args: Record<string, unknown>): Promise<unknown> {
   // Singularity self-modify tools — gated by an in-process meta capability.
   // Outside callers cannot grant meta caps over the wire; only the human user
   // running the TUI can. (#10 self-mod MCP.)
@@ -45,8 +48,8 @@ async function callTool(name: string, args: any): Promise<any> {
   const adapterId = m[1]!;
   const adapter = ADAPTERS.find((a) => a.id === adapterId);
   if (!adapter || !adapter.send) throw new Error(`no dispatchable adapter: ${adapterId}`);
-  const prompt = String(args?.prompt ?? '');
-  const persona = args?.persona ? String(args.persona) : undefined;
+  const prompt = String(args.prompt ?? '');
+  const persona = args.persona ? String(args.persona) : undefined;
   if (!prompt) throw new Error('prompt required');
 
   let out = '';
@@ -155,7 +158,7 @@ async function handle(msg: JsonRpcRequest): Promise<void> {
     if (msg.method === 'initialize') {
       reply(msg.id, {
         protocolVersion: '2024-11-05',
-        serverInfo: { name: 'singularity', version: '0.2.0' },
+        serverInfo: { name: 'singularity', version: packageVersion() },
         capabilities: { tools: {} },
       });
       return;
@@ -165,15 +168,23 @@ async function handle(msg: JsonRpcRequest): Promise<void> {
       return;
     }
     if (msg.method === 'tools/call') {
-      const name = msg.params?.name as string;
-      const args = msg.params?.arguments ?? {};
-      const result = await callTool(name, args);
+      const params = (
+        typeof msg.params === 'object' && msg.params !== null ? msg.params : {}
+      ) as Record<string, unknown>;
+      if (typeof params.name !== 'string') {
+        replyError(msg.id, -32602, 'params.name must be a string');
+        return;
+      }
+      const args = (
+        typeof params.arguments === 'object' && params.arguments !== null ? params.arguments : {}
+      ) as Record<string, unknown>;
+      const result = await callTool(params.name, args);
       reply(msg.id, result);
       return;
     }
     if (msg.method?.startsWith('notifications/')) return; // ignore notifications
     replyError(msg.id, -32601, `method not found: ${msg.method}`);
-  } catch (e: any) {
-    replyError(msg.id, -32000, String(e?.message ?? e));
+  } catch (e) {
+    replyError(msg.id, -32000, e instanceof Error ? e.message : String(e));
   }
 }

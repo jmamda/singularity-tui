@@ -6,15 +6,18 @@
  * subcommand. Auth via Bearer header against SINGULARITY_SERVER_PASSWORD.
  *
  * Routes:
+ *   GET  /                     — embedded web UI
  *   GET  /openapi.json         — machine-readable spec
- *   GET  /panes                — list panes + status
- *   POST /dispatch             — { slot, prompt } → SSE stream of AdapterEvents
- *   POST /broadcast            — { prompt, quorum? } → SSE
- *   GET  /artifacts            — list artifacts
+ *   GET  /panes                — list configured adapters
+ *   POST /dispatch             — { adapter, prompt } → SSE stream of AdapterEvents
  *   GET  /grammar              — dispatch grammar JSON
+ *
+ * Binds 127.0.0.1 by default; a non-loopback host requires
+ * SINGULARITY_SERVER_PASSWORD to be set.
  */
 
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { packageVersion } from './lib/version.js';
 import { claudeAdapter } from './adapters/claude.js';
 import { opencodeAdapter } from './adapters/opencode.js';
 import { codexAdapter } from './adapters/codex.js';
@@ -52,7 +55,12 @@ const WEB_UI_HTML = `<!doctype html>
   <script>
     fetch('/panes').then(r => r.json()).then(panes => {
       const sel = document.getElementById('adapter');
-      panes.forEach(p => sel.insertAdjacentHTML('beforeend', '<option value="' + p.id + '">' + p.label + '</option>'));
+      panes.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.label;
+        sel.appendChild(opt);
+      });
     });
     async function dispatch() {
       const out = document.getElementById('out');
@@ -97,7 +105,7 @@ const OPENAPI = {
   openapi: '3.0.3',
   info: {
     title: 'Singularity CLI HTTP API',
-    version: '0.4.0',
+    version: packageVersion(),
     description: 'Dispatch grammar over HTTP. SSE streams for live token output.',
   },
   paths: {
@@ -135,15 +143,16 @@ const OPENAPI = {
   },
 };
 
-import { timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual, createHash } from 'node:crypto';
 
 function authOk(req: IncomingMessage): boolean {
   const required = process.env.SINGULARITY_SERVER_PASSWORD;
   if (!required) return true;
   const got = (req.headers.authorization ?? '').replace(/^Bearer\s+/, '');
-  if (got.length !== required.length) return false;
-  // Constant-time compare — defends against timing attacks
-  return timingSafeEqual(Buffer.from(got), Buffer.from(required));
+  // Hash both sides so the compare is constant-time without leaking length.
+  const a = createHash('sha256').update(got).digest();
+  const b = createHash('sha256').update(required).digest();
+  return timingSafeEqual(a, b);
 }
 
 const MAX_BODY = 256 * 1024; // 256KB request body cap
@@ -186,32 +195,55 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     );
 
   if (req.method === 'POST' && url === '/dispatch') {
-    let body: any;
+    let body: unknown;
     try {
       body = JSON.parse(await readBody(req));
     } catch {
       return json(res, 400, { error: 'invalid json body' });
     }
-    const adapter = ADAPTERS[body.adapter];
+    if (typeof body !== 'object' || body === null) {
+      return json(res, 400, { error: 'body must be a JSON object' });
+    }
+    const { adapter: adapterId, prompt, persona } = body as Record<string, unknown>;
+    if (typeof adapterId !== 'string') return json(res, 400, { error: 'adapter must be a string' });
+    if (typeof prompt !== 'string' || !prompt.trim()) {
+      return json(res, 400, { error: 'prompt must be a non-empty string' });
+    }
+    if (persona !== undefined && typeof persona !== 'string') {
+      return json(res, 400, { error: 'persona must be a string' });
+    }
+    const adapter = ADAPTERS[adapterId];
     if (!adapter || !adapter.send) return json(res, 400, { error: 'unknown adapter' });
     res.writeHead(200, {
       'content-type': 'text/event-stream',
       'cache-control': 'no-cache',
       connection: 'keep-alive',
     });
-    for await (const ev of adapter.send(String(body.prompt), { persona: body.persona })) {
+    let closed = false;
+    res.on('close', () => {
+      closed = true;
+      // Stop the underlying CLI process — don't keep burning tokens for a gone client.
+      void adapter.stop().catch(() => {});
+    });
+    for await (const ev of adapter.send(prompt, { persona })) {
+      if (closed) break;
       res.write(`data: ${JSON.stringify(ev)}\n\n`);
     }
-    res.write('data: [DONE]\n\n');
-    res.end();
+    if (!closed) {
+      res.write('data: [DONE]\n\n');
+      res.end();
+    }
     return;
   }
 
   json(res, 404, { error: 'not found' });
 }
 
-export async function runHttpServer(port = 7777): Promise<void> {
-  const server = createServer((req, res) =>
+const LOOPBACK_HOSTS = new Set(['127.0.0.1', '::1', 'localhost']);
+
+/** Build the server without binding — lets tests listen on an ephemeral port and close it. */
+export function createHttpServer() {
+  return createServer((req, res) =>
     handle(req, res).catch((e) => {
       // Log full error server-side; return a generic message on the wire.
       process.stderr.write(
@@ -220,8 +252,19 @@ export async function runHttpServer(port = 7777): Promise<void> {
       json(res, 500, { error: 'internal error' });
     }),
   );
-  await new Promise<void>((resolve) => server.listen(port, resolve));
-  process.stdout.write(`● singularity http on :${port}\n`);
+}
+
+export async function runHttpServer(port = 7777, host?: string): Promise<void> {
+  const bindHost = host ?? process.env.SINGULARITY_SERVER_HOST ?? '127.0.0.1';
+  if (!LOOPBACK_HOSTS.has(bindHost) && !process.env.SINGULARITY_SERVER_PASSWORD) {
+    process.stderr.write(
+      `refusing to bind ${bindHost} without auth — set SINGULARITY_SERVER_PASSWORD to expose the server beyond loopback\n`,
+    );
+    process.exit(2);
+  }
+  const server = createHttpServer();
+  await new Promise<void>((resolve) => server.listen(port, bindHost, resolve));
+  process.stdout.write(`● singularity http on ${bindHost}:${port}\n`);
   process.stdout.write(
     `  GET  /openapi.json\n  GET  /grammar\n  GET  /panes\n  POST /dispatch (SSE)\n`,
   );

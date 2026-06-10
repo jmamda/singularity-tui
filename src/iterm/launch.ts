@@ -39,20 +39,6 @@ export async function launchSplits(specs: LaunchSpec[]): Promise<ItermSession[]>
   const cmds = specs.map((s) => escapeAppleString(s.command));
   const labels = specs.map((s) => escapeAppleString(s.label));
 
-  const script = `
-on idForSession(s)
-  tell s
-    set sid to id of s
-  end tell
-  return sid
-end idForSession
-
-tell application "iTerm2"
-  activate
-  set wasInside to (TERM_PROGRAM of (system attribute "TERM_PROGRAM") is "iTerm.app")
-end tell
-`;
-
   // The cleanest, most reliable approach: open a fresh iTerm window with 4 splits.
   // We forgo "split current session" to avoid mangling the user's existing layout.
   const fullScript = `
