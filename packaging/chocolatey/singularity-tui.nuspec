@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>singularity-tui</id>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
     <packageSourceUrl>https://github.com/jmamda/singularity-tui</packageSourceUrl>
     <owners>singularity-tui</owners>
     <title>Singularity CLI</title>

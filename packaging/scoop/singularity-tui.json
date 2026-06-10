@@ -1,10 +1,10 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Code-red TUI dispatcher for AI coding CLIs",
   "homepage": "https://github.com/jmamda/singularity-tui",
   "license": "MIT",
   "depends": "nodejs",
-  "url": "https://registry.npmjs.org/singularity-tui/-/singularity-tui-0.6.0.tgz",
+  "url": "https://registry.npmjs.org/singularity-tui/-/singularity-tui-0.7.0.tgz",
   "hash": "REPLACE_WITH_TARBALL_SHA256",
   "extract_dir": "package",
   "bin": [
