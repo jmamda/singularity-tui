@@ -5,7 +5,7 @@
   "license": "MIT",
   "depends": "nodejs",
   "url": "https://registry.npmjs.org/singularity-tui/-/singularity-tui-0.7.0.tgz",
-  "hash": "REPLACE_WITH_TARBALL_SHA256",
+  "hash": "f359c03ab74c628acc3f40cd225e825c3019f3b04d76d9fe7b69b715c2874a48",
   "extract_dir": "package",
   "bin": [
     [

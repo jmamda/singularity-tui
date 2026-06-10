@@ -9,7 +9,7 @@ license=('MIT')
 depends=('nodejs>=20')
 makedepends=('npm')
 source=("https://registry.npmjs.org/${pkgname}/-/${pkgname}-${pkgver}.tgz")
-sha256sums=('REPLACE_WITH_TARBALL_SHA256')
+sha256sums=('f359c03ab74c628acc3f40cd225e825c3019f3b04d76d9fe7b69b715c2874a48')
 
 package() {
   npm install -g --prefix "${pkgdir}/usr" "${srcdir}/${pkgname}-${pkgver}.tgz"
