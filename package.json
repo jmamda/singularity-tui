@@ -4,8 +4,8 @@
   "description": "Code-red TUI dispatcher for AI coding CLIs (Claude Code, OpenCode, Codex, Antigravity) with LangGraph workflow monitoring.",
   "type": "module",
   "bin": {
-    "singularity": "./dist/cli.js",
-    "scli": "./dist/cli.js"
+    "singularity": "dist/cli.js",
+    "scli": "dist/cli.js"
   },
   "scripts": {
     "dev": "tsx src/cli.tsx",
