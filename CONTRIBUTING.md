@@ -76,7 +76,7 @@ Releases are driven by [changesets](https://github.com/changesets/changesets):
 
 1. Every user-facing PR includes a changeset (`npx changeset`).
 2. Merging to `main` makes the release workflow open/refresh a **Version Packages** PR, which bumps `package.json`, writes `CHANGELOG.md`, and runs `npm run sync-packaging` to keep the brew/scoop/choco/AUR manifests at the same version.
-3. Merging the Version PR publishes to npm (`npm publish --provenance --access public` — requires the `NPM_TOKEN` secret and `id-token: write`; currently disabled while the repo is private).
+3. Merging the Version PR publishes to npm via `npx changeset publish` (idempotent — already-published versions are skipped; provenance via `NPM_CONFIG_PROVENANCE`; the action creates the GitHub release and pushes the tag). Note: changeset-release branches get no CI checks (GITHUB_TOKEN pushes don't trigger workflows), so merge the Version PR with `gh pr merge --admin` — its commits are already green on main.
 4. **After** the tarball is on npm, run `npm run sync-packaging` once more — it can now fill the real `sha256` into the brew/scoop/AUR manifests (they intentionally hold `REPLACE_WITH_TARBALL_SHA256` until then) — and commit.
 5. Post-publish smoke check: `npx <package>@latest version`, `npx <package>@latest --demo` in a real terminal, and a fresh `npm i -g` on one non-mac platform.
 
